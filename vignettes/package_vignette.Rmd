@@ -1,0 +1,170 @@
+---
+title: "Introduction to the iimi package"
+author: "Emily Ning"
+date: 2023-04-29
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+## Introduction
+
+This vignette aims to give an introduction on how to use the `iimi` package to do plant virus diagnostics and how to visualize the coverage profile for the sample mapping.
+
+First, we will load necessary packages before we start any analysis.
+
+```{r, warning=FALSE, message=FALSE}
+library(iimi)
+
+library(Biostrings)
+
+load("C:/Users/dsain/Desktop/CLEANSED/DataWrangling/RData/truth.rda")
+```
+
+
+## Converting BAM file(s) into coverage profiles and feature-extracted data frame
+
+First, we convert the BAM file(s) into coverage profiles and feature-extracted data frame. We will use the coverage profiles to visualize the mapping information. The feature-extracted data frame will be used in the model training and testing process. Note that both training data and testing data need to go through the conversion step. In our example, we only did the conversion for the test data because we are using the default training model later.
+
+```{r, warning=FALSE}
+path_to_bamfiles <- list.files(path = "C:/Users/dsain/Desktop/CLEANSED/test_bam",
+                               pattern = "bam$", full.names = TRUE, 
+                               include.dirs = TRUE)
+
+toy_data <- BAMtocov(path_to_bamfiles, type = "single")
+
+cov_info <- toy_data$cov
+
+df <- toy_data$MLdataframe
+head(df)
+```
+
+## Visualization
+
+Next, we can visualize the coverage profile by using the `plot_cov` and the `plot_gc` functions.
+
+* `plot_cov`: plots the coverage profile of the plant sample
+* `plot_gc`: plots the percentage of A nucleotides and GC content for a sliding window of k-mer with the step as 1. We used the default setting of k = 75. 
+
+```{r, fig.width=7, fig.height=5}
+covs_selected = list()
+covs_selected$`16GVP045_1` <- cov_info$`16GVP045_1`[c("4c559wtw", "z7cwn9ai", "7kb0l74n", "5948de0x")]
+
+par(mar = c(1,2,1,1))
+layout(matrix(c(1,1,2,5,5,6,3,3,4,7,7,8), nrow = 6))
+
+plot_cov(covs = covs_selected)
+```
+
+This gives us a general idea of what the potential viruses are.
+
+* Plot (1) indicates that the virus segment infected the sample
+* Plot (2) indicates that the virus segment did not infect the sample
+* Plot (3) indicates that the peak in the coverage profile could be explained by the mappability profile
+* Plot (4) indicates that the peak in the coverage profile could be explained by the increase in the A nucleotide percentage
+
+## Model training
+
+Now, we are going to train the model. Ideally, the number of the samples used to train the model should be bigger than 100. However, since we are only providing a tutorial on how to use the `train_iimi` function, only one sample is used to train the model. 
+
+First, we need to prepare our training data:
+
+```{r}
+train_x = df[df$sample_id == "16GVP045_1",]
+train_y = detection_segment[train_x$seg_id, "16GVP045_1"]
+```
+
+Then, we plug in the variables into the `train_iimi` function with the defualt XGBoost model:
+
+```{r, message=FALSE, warning=FALSE, results='hide'}
+fit <- train_iimi(train_x = train_x, train_y = train_y)
+```
+
+Now, we have a trained model using the toy data.
+
+## Model testing
+
+To do the detection, use the sample(s) that you wish to detect as the input.
+
+```{r}
+test_x = df[df$sample_id == "22SP009_S6_1",]
+test_y = detection_segment[test_x$seg_id, "22SP009_S6_1"]
+```
+
+After preparing your test sample, you can choose to test the data using our provided training model or the model you trained using `train_iimi()`.
+
+If you wish to use your own model: 
+
+```{r}
+prediction_customized <- predict_iimi(newdata = test_x, method = "xgb", trained_model = fit)
+```
+
+If you wish to use provided training model:
+
+```{r, message=FALSE, warning=FALSE, results='hide'}
+prediction_default <- predict_iimi(newdata = test_x, method = "xgb")
+```
+
+The detection of your plant sample(s) is finished.
+
+
+
+
+
+
+
+
+
+```{r, echo=FALSE, fig.show='hide', results='hide'}
+# confMatrix <- function(sample_names, detection_df, pred_df) {
+#   cM = matrix(0, 2, 2)
+#   for (ii in sample_names) {
+#     vdf = data.frame(matrix(FALSE, nrow = 1563, ncol = 1))
+#     colnames(vdf) = ii
+#     rownames(vdf) = rownames(detection_df)
+#     vv = pred_df[which(pred_df$sample_id==ii),]$virus_name
+#     vv = unique(vv)
+#     if (length(vv) > 0) {
+#       for (jj in vv) {
+#         vdf[jj, ii] = TRUE
+#       }
+#     }
+#     labels = as.factor(detection_df[,ii])
+#     detect = as.factor(vdf[,ii])
+#     if (length(levels(labels)) == 1|length(levels(detect))==1) {
+#       levels(labels)<-c(F, T)
+#       levels(detect)<-c(F, T)
+# 
+#     }
+#     mm = table(prediction = detect, ref = labels)
+#     cM = cM+mm
+#   }
+#   return(cM)
+# }
+# 
+# cm_customized <- confMatrix(sample_names = unique(test_x$sample_id), 
+#                             detection_df = detection_virus, 
+#                             pred_df = prediction_customized)
+# 
+# cm_default <- confMatrix(sample_names = unique(test_x$sample_id), 
+#                             detection_df = detection_virus, 
+#                             pred_df = prediction_default)
+# 
+# 
+# accuracy_customized = (cm_customized[1,1]+cm_customized[2,2])/sum(cm_customized)
+# precision_customized = cm_customized[2,2]/(cm_customized[2,2]+cm_customized[2,1])
+# recall_customized = cm_customized[2,2]/(cm_customized[2,2]+cm_customized[1,2])
+# f1_customized = 2*cm_customized[2,2]/(2*cm_customized[2,2]+cm_customized[2,1]+cm_customized[1,2])
+# 
+# accuracy_default = (cm_default[1,1]+cm_default[2,2])/sum(cm_default)
+# precision_default = cm_default[2,2]/(cm_default[2,2]+cm_default[2,1])
+# recall_default = cm_default[2,2]/(cm_default[2,2]+cm_default[1,2])
+# f1_default = 2*cm_default[2,2]/(2*cm_default[2,2]+cm_default[2,1]+cm_default[1,2])
+# 
+# plot(c(accuracy_customized, precision_customized, recall_customized, f1_customized), type = "l", lty = 2, ylab = "", xlab = "")
+# lines(c(accuracy_default, precision_default, recall_default, f1_default))
+```
+
