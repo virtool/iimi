@@ -3,9 +3,11 @@
 #' @description Converts one or more indexed and sorted BAM files into a
 #'     feature-extracted data frame after mappability profiling
 #'
-#' @param bamfile A BAM file
+#' @param bamfile BAM file(s)
+#' @param covs Coverage profile(s) in RLE format. If multiple samples, a 
+#' list of RLE mapping result for the samples.
 #' @param MP The mappability profile from a host sample (we only have
-#'     Arabdopsis. Thaliana right now)
+#'     Arabidopsis thaliana right now)
 #' @param type Indicate if the sequencing type is single-end or pair-end reads
 #'
 #' @return A data frame object that contains the mapping result for each virus
@@ -24,20 +26,25 @@
 
 
 ## convert BAM sorted and index files to dataframe and mappability profiling
-BAMtocov<-function(bamfile, MP = mappability_profile, type) {
-  ## first, convert BAM files to coverages
-  covs<- setNames(lapply(
-    bamfile,
-    function(x) {
-      filedata <- BamFile(x)
-      if (type == "single") {
-        xread<-readGAlignments(filedata)
-      } else if (type == "pair") {
-        xread<-readGAlignmentPairs(filedata)
-      }
-      xcov<-coverage(xread)
-      return(xcov)
-    }), sub(pattern = "(.*)\\.sorted.*$", replacement = "\\1", basename(bamfile)))
+BAMtocov<-function(bamfile, covs, MP = mappability_profile, type) {
+  if (missing(covs)) {
+    ## first, convert BAM files to coverages
+    covs<- setNames(lapply(
+      bamfile,
+      function(x) {
+        filedata <- BamFile(x)
+        if (type == "single") {
+          xread<-readGAlignments(filedata)
+        } else if (type == "pair") {
+          xread<-readGAlignmentPairs(filedata)
+        }
+        xcov<-coverage(xread)
+        return(xcov)
+      }), sub(pattern = "(.*)\\.sorted.*$", replacement = "\\1", basename(bamfile)))
+  }
+  if (missing(bamfile) && missing(type)) {
+    next
+  }
   ### only keep reads that are mapped to the virus segment
   covs_onlymapped<-lapply(covs, function(x) {
     x[sapply(x, function(y){!all(y==0)})]
@@ -55,8 +62,10 @@ BAMtocov<-function(bamfile, MP = mappability_profile, type) {
   ## convert from cov to df
   model.data<-data.frame(matrix(ncol = 20,nrow = 0))
   col_names<- c("seg_id","iso_id","virus_name","sample_id","A_percent","C_percent",
-                "T_percent","GC_percent","avg_cov","max_cov","seg_len","cov_2_percent","cov_3_percent",
-                "cov_4_percent","cov_5_percent","cov_6_percent","cov_7_percent","cov_8_percent","cov_9_percent","cov_10_percent")
+                "T_percent","GC_percent","avg_cov","max_cov","seg_len",
+                "cov_2_percent","cov_3_percent","cov_4_percent","cov_5_percent",
+                "cov_6_percent","cov_7_percent","cov_8_percent","cov_9_percent",
+                "cov_10_percent")
   colnames(model.data)<-col_names
   maxcov<-vector()
   meancov<-vector()

@@ -4,13 +4,16 @@
 \alias{BAMtocov}
 \title{BAMtocov}
 \usage{
-BAMtocov(bamfile, MP = mappability_profile, type)
+BAMtocov(bamfile, covs, MP = mappability_profile, type)
 }
 \arguments{
-\item{bamfile}{A BAM file}
+\item{bamfile}{BAM file(s)}
+
+\item{covs}{Coverage profile(s) in RLE format. If multiple samples, a
+list of RLE mapping result for the samples.}
 
 \item{MP}{The mappability profile from a host sample (we only have
-Arabdopsis. Thaliana right now)}
+Arabidopsis thaliana right now)}
 
 \item{type}{Indicate if the sequencing type is single-end or pair-end reads}
 }
