@@ -21,54 +21,78 @@
 #' @importFrom IRanges coverage
 #' @importFrom stats setNames
 
-
-
-
-
 ## convert BAM sorted and index files to dataframe and mappability profiling
-BAMtocov<-function(bamfile, covs, MP = mappability_profile, type) {
+convert_bam_to_cov <- function(bamfile, covs, MP = mappability_profile, type) {
   if (missing(covs)) {
     ## first, convert BAM files to coverages
-    covs<- setNames(lapply(
+    covs <- setNames(lapply(
       bamfile,
       function(x) {
         filedata <- BamFile(x)
+
         if (type == "single") {
           xread<-readGAlignments(filedata)
         } else if (type == "pair") {
           xread<-readGAlignmentPairs(filedata)
         }
-        xcov<-coverage(xread)
+
+        xcov <- coverage(xread)
+
         return(xcov)
       }), sub(pattern = "(.*)\\.sorted.*$", replacement = "\\1", basename(bamfile)))
   }
+
   if (missing(bamfile) && missing(type)) {
     next
   }
+
   ### only keep reads that are mapped to the virus segment
   covs_onlymapped<-lapply(covs, function(x) {
     x[sapply(x, function(y){!all(y==0)})]
   })
+
   ## MP step
   for (nn in names(covs_onlymapped)) {
     for (ss in names(covs_onlymapped[[nn]])) {
-      if (length(mappability_profile[[ss]])>0 && (length(mappability_profile[[ss]])>0/length(covs_onlymapped[[nn]][[ss]]))<0.2) {
+      if (length(mappability_profile[[ss]]) > 0 && (length(mappability_profile[[ss]]) > 0/length(covs_onlymapped[[nn]][[ss]]))<0.2) {
         for (ii in mappability_profile[[ss]]) {
           covs_onlymapped[[nn]][[ss]][ii] = 0
         }
       }
     }
   }
+
   ## convert from cov to df
-  model.data<-data.frame(matrix(ncol = 20,nrow = 0))
-  col_names<- c("seg_id","iso_id","virus_name","sample_id","A_percent","C_percent",
-                "T_percent","GC_percent","avg_cov","max_cov","seg_len",
-                "cov_2_percent","cov_3_percent","cov_4_percent","cov_5_percent",
-                "cov_6_percent","cov_7_percent","cov_8_percent","cov_9_percent",
-                "cov_10_percent")
-  colnames(model.data)<-col_names
-  maxcov<-vector()
-  meancov<-vector()
+  model.data <- data.frame(matrix(ncol = 20,nrow = 0))
+
+  col_names<- c(
+    "seg_id",
+    "iso_id",
+    "virus_name",
+    "sample_id",
+    "A_percent",
+    "C_percent",
+    "T_percent",
+    "GC_percent",
+    "avg_cov",
+    "max_cov",
+    "seg_len",
+    "cov_2_percent",
+    "cov_3_percent",
+    "cov_4_percent",
+    "cov_5_percent",
+    "cov_6_percent",
+    "cov_7_percent",
+    "cov_8_percent",
+    "cov_9_percent",
+    "cov_10_percent"
+  )
+
+  colnames(model.data) <- col_names
+
+  maxcov <- vector()
+  meancov <- vector()
+
   #use for loop to get the data frame
   for (sample in names(covs_onlymapped)) {
     for (seg in names(covs_onlymapped[[sample]])) {
@@ -104,19 +128,31 @@ BAMtocov<-function(bamfile, covs, MP = mappability_profile, type) {
       percent_8<-sum(covs_onlymapped[[sample]][[seg]]@lengths[idx8])/sum(covs_onlymapped[[sample]][[seg]]@lengths)
       percent_9<-sum(covs_onlymapped[[sample]][[seg]]@lengths[idx9])/sum(covs_onlymapped[[sample]][[seg]]@lengths)
       percent_10<-sum(covs_onlymapped[[sample]][[seg]]@lengths[idx10])/sum(covs_onlymapped[[sample]][[seg]]@lengths)
-      model.data[nrow(model.data)+1, ] <- c(seg_id,iso_id, v_name,sample_id,
-                                            acontent, ccontent, tcontent,
-                                            gccontent, meanval, maxval,
-                                            seg_length, percent_2, percent_3,
-                                            percent_4, percent_5, percent_6,
-                                            percent_7, percent_8, percent_9,
-                                            percent_10)
+
+      model.data[nrow(model.data)+1, ] <- c(
+        seg_id, iso_id, v_name,sample_id,
+        acontent,
+        ccontent,
+        tcontent,        
+        gccontent,
+        meanval,
+        maxval,
+        seg_length,
+        percent_2,
+        percent_3,
+        percent_4,
+        percent_5,
+        percent_6,
+        percent_7,
+        percent_8,
+        percent_9,
+        percent_10
+      )
     }
   }
   for (i in colnames(model.data[,-c(1:4)])) {
     model.data[[i]] = as.numeric(model.data[[i]])
   }
+
   list(MLdataframe = model.data, cov = covs_onlymapped)
 }
-
-

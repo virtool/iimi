@@ -25,44 +25,68 @@
 
 
 
-train_iimi <- function(train_x, train_y, method = "xgb",
-                           params_rf = list(ntree=100, nodesize = 1, replace = T,
-                                            mtry = floor(sqrt(ncol(train_x)))),
-                           nrounds_xgb = 100,
-                           params_xgb = list(max_depth = 10, gamma = 6)) {
-
+train_iimi <- function(
+  train_x,
+  train_y,
+  method = "xgb",
+  params_rf = list(
+    ntree=100,
+    nodesize = 1,
+    replace = T,
+    mtry = floor(sqrt(ncol(train_x)))
+  ),
+  nrounds_xgb = 100,
+  params_xgb = list(max_depth = 10, gamma = 6)
+) {
   if (method == "rf") {
     # take in default parameters if no parameters are set
-    if ("sampsize" %in% names(params_rf) == F) {
-      trained_model = randomForest(x = train_x, y = train_y,
-                                   ntree = params_rf$ntree, mtry = params_rf$mtry,
-                                   nodesize = params_rf$nodesize, importance = T,
-                                   replace = params_rf$replace)
-    } else {
-      trained_model = randomForest(x = train_x, y = train_y,
-                                   ntree = params_rf$ntree, mtry = params_rf$mtry,
-                                   nodesize = params_rf$nodesize,
-                                   sampsize = params_rf$sampsize, importance = T,
-                                   replace = params_rf$replace)
+    if ("sampsize" %in% names(params_rf)) {
+      return(randomForest(
+        x = train_x,
+        y = train_y,
+        ntree = params_rf$ntree,
+        mtry = params_rf$mtry,
+        nodesize = params_rf$nodesize,
+        importance = T,
+        replace = params_rf$replace
+      ))
+          }      trained_model = randomForest(
+        x = train_x,
+        y = train_y,
+        ntree = params_rf$ntree,
+        mtry = params_rf$mtry,
+        nodesize = params_rf$nodesize,
+        sampsize = params_rf$sampsize,
+        importance = T,
+        replace = params_rf$replace
+      )
     }
-  } else if (method == "xgb") {
+    
+    return(trained_model)
+  } 
+  
+  if (method == "xgb") {
     #convert matrix to dgCMatrix
-    xgbtrain<-sparsify(data.table(train_x))
+    xgbtrain <- sparsify(data.table(train_x))
+
     if (class(train_y) == "factor") {
-      xgblabel<-as.numeric(as.logical(train_y))
+      xgblabel <- as.numeric(as.logical(train_y))
     } else {
-      xgblabel<-as.numeric(train_y)
+      xgblabel <- as.numeric(train_y)
     }
-    trained_model = xgboost(data = xgbtrain, label = xgblabel,
-                            objective = "binary:logistic",
-                            nrounds = nrounds_xgb,
-                            params = params_xgb)
-  } else {
-    stop("Only random forest model or XGBoost model is support by this function")
+
+    trained_model = xgboost(
+      data = xgbtrain,
+      label = xgblabel,
+      objective = "binary:logistic",
+      nrounds = nrounds_xgb,
+      params = params_xgb
+    )
+
+    return(trained_model)
   }
 
-  trained_model
-
+  stop("Only random forest model or XGBoost model is support by this function")
 }
 
 
