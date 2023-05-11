@@ -21,43 +21,55 @@
 
 
 predict_iimi <- function(newdata, method, trained_model, seg_level = F) {
-  if (method == "rf") {
-    if (missing(trained_model)) {
-      pred = predict(newdata = newdata, trained_rf)
-    } else {
-      pred = predict(newdata = newdata, trained_model)
-    }
-    if (seg_level == F) {
+  if (method == "rf") {    
+    model = if missing(trained_model) trained_rf else trained_model
+
+    pred = predict(newdata = newdata, model)
+    
+    if (seg_level) {
       result_df <- pred %>% group_by(sample_id, virus_name) %>%
-        summarise(virus_name = first(virus_name),
-                  seg_id = first(seg_id),
-                  iso_id = first(iso_id),
-                  prediction = any(as.logical(prediction)))
-    } else {
-      result_df = pred
+        summarise(
+          virus_name = first(virus_name),
+          seg_id = first(seg_id),
+          iso_id = first(iso_id),
+          prediction = any(as.logical(prediction))
+        )
+
+      return (result_df)
     }
-  } else if (method == "xgb") {
+
+    return(pred)    
+  }
+  
+  if (method == "xgb") {
     test = sparsify(data.table(newdata))
-    if (missing(trained_model)) {
-      pred = predict(newdata = test, trained_xgb)
-    } else {
-      pred = predict(newdata = test, trained_model)
-    }
-    pred<-data.frame(prediction = pred>0.5, seg_id = newdata$seg_id, iso_id = newdata$iso_id,
-                         virus_name = newdata$virus_name, sample_id = newdata$sample_id)
-    if (seg_level == F) {
+
+    model = if missing(trained_model) trained_xgb else trained_model
+
+    pred = predict(newdata = test, model)
+
+    pred <- data.frame(
+      prediction = pred>0.5,
+      seg_id = newdata$seg_id,
+      iso_id = newdata$iso_id,
+      virus_name = newdata$virus_name,
+      sample_id = newdata$sample_id
+    )
+
+    if (seg_level) {
       result_df <- pred %>% group_by(sample_id, virus_name) %>%
-        summarise(virus_name = first(virus_name),
-                  seg_id = first(seg_id),
-                  iso_id = first(iso_id),
-                  prediction = any(as.logical(prediction)))
-    } else {
-      result_df = pred
+        summarise(
+          virus_name = first(virus_name),
+          seg_id = first(seg_id),
+          iso_id = first(iso_id),
+          prediction = any(as.logical(prediction))
+        )
+
+      return (result_df)
     }
-  } else {
-    stop("Only random forets and XGBoost are supported")
+
+    return(pred)
   }
 
-  result_df
-
+  stop("Only random forest and XGBoost are supported")
 }
