@@ -1,0 +1,5 @@
+"0","prediction_customized <- predict_iimi(newdata = test_x, method = ""xgb"", trained_model = fit)
+"
+"2","Error in UseMethod(""predict"") : 
+  no applicable method for 'predict' applied to an object of class ""list""
+"
