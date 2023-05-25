@@ -73,12 +73,7 @@ train_iimi <- function(
   if (method == "xgb") {
     #convert matrix to dgCMatrix
     xgbtrain <- sparsify(data.table(train_x))
-
-    if (class(train_y) == "factor") {
-      xgblabel <- as.numeric(as.logical(train_y))
-    } else {
-      xgblabel <- as.numeric(train_y)
-    }
+    xgblabel <- as.numeric(as.logical(train_y))
 
     trained_model = xgboost(
       data = xgbtrain,

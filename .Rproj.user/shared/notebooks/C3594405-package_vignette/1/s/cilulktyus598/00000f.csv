@@ -1,2 +1,0 @@
-"0","train_x = df[df$sample_id == ""16GVP045_1"",]"
-"0","train_y = detection_segment[train_x$seg_id, ""16GVP045_1""]"

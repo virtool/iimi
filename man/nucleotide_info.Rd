@@ -3,7 +3,7 @@
 \docType{data}
 \name{nucleotide_info}
 \alias{nucleotide_info}
-\title{Nucleotide information of over 3,000 virus segments}
+\title{Nucleotide information of 3,138 virus segments}
 \format{
 A data frame with 3,138 rows and 7 variables:
 \describe{

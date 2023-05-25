@@ -43,10 +43,6 @@ convert_bam_to_cov <- function(bam_file, covs, map_profile = mappability_profile
       }), sub(pattern = "(.*)\\.sorted.*$", replacement = "\\1", basename(bam_file)))
   }
 
-  if (missing(bam_file) && missing(paired)) {
-    next
-  }
-
   ### only keep reads that are mapped to the virus segment
   covs_only_mapped <- lapply(covs, function(x) {
     x[sapply(x, function(y){!all(y==0)})]
