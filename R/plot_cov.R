@@ -1,19 +1,23 @@
 #' @title plot_cov()
 #'
+#' @export
+#' @importFrom graphics lines plot legend
+#'
+#'
+#'
+#'
 #' @description Plots the coverage profile of the mapped plant sample.
 #'
 #' @param covs An RLE list of coverage information of one or more plant samples.
 #' @param cex The size of the main title.
-#' @param gc_status Whether display the percentages of A nucleotide and GC
-#'      content. Default is TRUE.
+#' @param nucleotide_status Whether display the percentages of A nucleotide and GC
+#'     content. Default is TRUE.
 #' @param legend_status Whether display the legend of the plot. Default is TRUE.
 #' @param window The size of the sliding window. Default is 75.
 #'
 #' @return The coverage profile of the mapped plant sample.
-#' @export
-#' @importFrom graphics lines plot legend
 
-plot_cov <- function(covs, cex = 0.7, gc_status = T, legend_status = T, window = 75) {
+plot_cov <- function(covs, cex = 0.7, nucleotide_status = T, legend_status = T, window = 75) {
   for (sample in names(covs)) {
     counter = 1
 
@@ -26,9 +30,9 @@ plot_cov <- function(covs, cex = 0.7, gc_status = T, legend_status = T, window =
           "). ",
           sample,
           ": ",
-          GCdf[GCdf$seg_id == seg,1],
+          nucleotide_info[nucleotide_info$seg_id == seg,1],
           ",",
-          GCdf[GCdf$seg_id == seg,2],
+          nucleotide_info[nucleotide_info$seg_id == seg,2],
           ",",
           seg
         ),
@@ -46,7 +50,7 @@ plot_cov <- function(covs, cex = 0.7, gc_status = T, legend_status = T, window =
         )
       }
 
-      if (gc_status) {
+      if (nucleotide_status) {
         gc = rowSums(
           letterFrequencyInSlidingView(
             virus_segments[[seg]],
@@ -76,7 +80,7 @@ plot_cov <- function(covs, cex = 0.7, gc_status = T, legend_status = T, window =
             lwd = 2,
             horiz = TRUE,
             xpd = TRUE,
-            bty="n",
+            bty = "n",
             inset = c(1,0),
             cex = cex
           )

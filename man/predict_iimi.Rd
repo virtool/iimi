@@ -4,24 +4,26 @@
 \alias{predict_iimi}
 \title{predict_iimi()}
 \usage{
-predict_iimi(newdata, method, trained_model, seg_level = F)
+predict_iimi(newdata, method, trained_model, report_result_level = 2)
 }
 \arguments{
-\item{newdata}{A matrix or data frame that contains the diagnostics result}
+\item{newdata}{A matrix or data frame that contains the features extracted
+from the coverage profile using \code{convert_bam_to_cov()}.}
 
 \item{method}{The machine learning method of choice, either Random Forest or
 XGBoost. Default is the XGBoost model}
 
 \item{trained_model}{The trained model. If not provided, default model is used}
 
-\item{seg_level}{Whether to report the diagnostics result in a virus segment
-level. If TRUE, the result data frame returns detection result for each
-segment in each sample. Default is FALSE.}
+\item{report_result_level}{Indicate what level of result the result should
+report. "1" reports the segment, isolate, and virus name along with the
+diagnostics result. "2" reports the virus names along with the diagnostics
+result. Default is 2.}
 }
 \value{
 A data frame of diagnostics result for each sample
 }
 \description{
-Uses a machine learning model to predict the diagnostics result
+Uses a machine learning model to predict the infection status
 for the plant sample(s). User can use their own model if needed.
 }

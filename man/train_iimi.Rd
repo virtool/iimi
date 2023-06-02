@@ -15,18 +15,18 @@ train_iimi(
 )
 }
 \arguments{
-\item{train_x}{A data frane or a matrix of predictors}
+\item{train_x}{A data frame or a matrix of predictors}
 
 \item{train_y}{A response vector of labels (needs to be a factor)}
 
 \item{method}{The machine learning method of choice, either Random Forest or
-XGBoost. Default is the XGBoost model}
+XGBoost. Default is XGBoost.}
 
-\item{params_rf}{A list of parameters to train a Random Forest in train_iimi}
+\item{params_rf}{A list of parameters to train a Random Forest model in train_iimi()}
 
 \item{nrounds_xgb}{Max number of boosting iterations}
 
-\item{params_xgb}{A list of parameters to train a XGBoost model in train_iimi}
+\item{params_xgb}{A list of parameters to train an XGBoost model in train_iimi()}
 }
 \value{
 A Random Forest or a XGBoost model
@@ -35,8 +35,10 @@ A Random Forest or a XGBoost model
 Trains a XGBoost (default) or Random Forest model using
 user-provided data. Default for XGBooost model is:
 \itemize{
-\item nrounds = 100, max_depth = 10, gamma = 6
+\item{nrounds = 100, max_depth = 10, gamma = 6}
+}
 Default for Random Forest model is:
-\item ntree=100, nodesize = 1, replace = T, mtry = floor(sqrt(ncol(train_x))))
+\itemize{
+\item{ntree = 100, nodesize = 1, replace = T, mtry = floor(sqrt(ncol(train_x))))}
 }
 }

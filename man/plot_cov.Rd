@@ -4,19 +4,25 @@
 \alias{plot_cov}
 \title{plot_cov()}
 \usage{
-plot_cov(covs, cex = 0.7, gc_status = T, legend_status = T, window = 75)
+plot_cov(
+  covs,
+  cex = 0.7,
+  nucleotide_status = T,
+  legend_status = T,
+  window = 75
+)
 }
 \arguments{
 \item{covs}{An RLE list of coverage information of one or more plant samples.}
 
 \item{cex}{The size of the main title.}
 
-\item{gc_status}{Whether display the percentages of A nucleotide and GC
+\item{nucleotide_status}{Whether display the percentages of A nucleotide and GC
 content. Default is TRUE.}
 
 \item{legend_status}{Whether display the legend of the plot. Default is TRUE.}
 
-\item{window}{The size of the sliding window. Default is 75-mer.}
+\item{window}{The size of the sliding window. Default is 75.}
 }
 \value{
 The coverage profile of the mapped plant sample.
