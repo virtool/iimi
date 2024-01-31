@@ -19,26 +19,32 @@ train_iimi(
 
 \item{train_y}{A response vector of labels (needs to be a factor)}
 
-\item{method}{The machine learning method of choice, either Random Forest or
-XGBoost. Default is XGBoost.}
+\item{method}{The machine learning method of choice, \verb{Random Forest} or
+\code{XGBoost}, or \verb{Elastic Net}. Default is \code{XGBoost}.}
 
-\item{params_rf}{A list of parameters to train a Random Forest model in train_iimi()}
+\item{params_rf}{A list of parameters to train a \verb{Random Forest} model in
+\code{train_iimi()}}
 
 \item{nrounds_xgb}{Max number of boosting iterations}
 
-\item{params_xgb}{A list of parameters to train an XGBoost model in train_iimi()}
+\item{params_xgb}{A list of parameters to train an \code{XGBoost} model in
+\code{train_iimi()}}
 }
 \value{
-A Random Forest or a XGBoost model
+A \verb{Random Forest}, \code{XGBoost}, \verb{Elastic Net} model
 }
 \description{
-Trains a XGBoost (default) or Random Forest model using
-user-provided data. Default for XGBooost model is:
+Trains a \code{XGBoost} (default), \verb{Random Forest}, or \verb{Elastic Net}
+model using user-provided data. Default for \code{XGBooost} model is:
 \itemize{
-\item{nrounds = 100, max_depth = 10, gamma = 6}
+\item{\verb{nrounds = 100, max_depth = 10, gamma = 6}}
 }
-Default for Random Forest model is:
+Default for \verb{Random Forest} model is:
 \itemize{
-\item{ntree = 100, nodesize = 1, replace = T, mtry = floor(sqrt(ncol(train_x))))}
+\item{\verb{ntree = 100, nodesize = 1, replace = T, mtry = floor(sqrt(ncol(train_x))))}}
+}
+Default for \verb{Elastic Net} model is:
+\itemize{
+\item{\code{family = "binomial"}}
 }
 }

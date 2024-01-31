@@ -18,9 +18,10 @@ plot_cov(
 \item{cex}{The size of the main title.}
 
 \item{nucleotide_status}{Whether display the percentages of A nucleotide and GC
-content. Default is TRUE.}
+content. Default is \code{TRUE}.}
 
-\item{legend_status}{Whether display the legend of the plot. Default is TRUE.}
+\item{legend_status}{Whether display the legend of the plot. Default is
+\code{TRUE}.}
 
 \item{window}{The size of the sliding window. Default is 75.}
 }

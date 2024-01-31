@@ -5,46 +5,56 @@
 #' @importFrom mltools sparsify
 #' @importFrom xgboost xgboost
 #' @importFrom data.table data.table
+#' @importFrom MTPS cv.glmnet2
+#' @importFrom caret createFolds
+#' @importFrom stats model.matrix
 #'
 #'
 #'
 #'
-#' @description Trains a XGBoost (default) or Random Forest model using
-#'     user-provided data. Default for XGBooost model is:
+#' @description Trains a `XGBoost` (default), `Random Forest`, or `Elastic Net`
+#'     model using user-provided data. Default for `XGBooost` model is:
 #'     \itemize{
-#'         \item{nrounds = 100, max_depth = 10, gamma = 6}
+#'         \item{`nrounds = 100, max_depth = 10, gamma = 6`}
 #'     }
-#'     Default for Random Forest model is:
+#'     Default for `Random Forest` model is:
 #'     \itemize{
-#'         \item{ntree = 100, nodesize = 1, replace = T, mtry = floor(sqrt(ncol(train_x))))}
+#'         \item{`ntree = 100, nodesize = 1, replace = T, mtry = floor(sqrt(ncol(train_x))))`}
 #'     }
+#'     Default for `Elastic Net` model is:
+#'     \itemize{
+#'         \item{`family = "binomial"`}
+#'     }
+#'
 #'
 #' @param train_x A data frame or a matrix of predictors
 #' @param train_y A response vector of labels (needs to be a factor)
-#' @param method The machine learning method of choice, either Random Forest or
-#'     XGBoost. Default is XGBoost.
-#' @param params_rf A list of parameters to train a Random Forest model in train_iimi()
+#' @param method The machine learning method of choice, `Random Forest` or
+#'     `XGBoost`, or `Elastic Net`. Default is `XGBoost`.
+#' @param params_rf A list of parameters to train a `Random Forest` model in
+#'     `train_iimi()`
 #' @param nrounds_xgb Max number of boosting iterations
-#' @param params_xgb A list of parameters to train an XGBoost model in train_iimi()
+#' @param params_xgb A list of parameters to train an `XGBoost` model in
+#'     `train_iimi()`
 #'
-#' @return A Random Forest or a XGBoost model
+#' @return A `Random Forest`, `XGBoost`, `Elastic Net` model
 
 
 
 
-train_iimi <- function(
-  train_x,
-  train_y,
-  method = "xgb",
-  params_rf = list(
-    ntree=100,
-    nodesize = 1,
-    replace = T,
-    mtry = floor(sqrt(ncol(train_x)))
-  ),
-  nrounds_xgb = 100,
-  params_xgb = list(max_depth = 10, gamma = 6)
-) {
+
+
+train_iimi <- function(train_x,
+                       train_y,
+                       method = "xgb",
+                       params_rf = list(
+                         ntree = 100,
+                         nodesize = 1,
+                         replace = T,
+                         mtry = floor(sqrt(ncol(train_x)))
+                       ),
+                       nrounds_xgb = 100,
+                       params_xgb = list(max_depth = 10, gamma = 6)) {
   if (method == "rf") {
     # take in default parameters if no parameters are set
     if ("sampsize" %in% names(params_rf)) {
@@ -59,16 +69,16 @@ train_iimi <- function(
         replace = params_rf$replace
       )
     }
-      trained_model = randomForest(
-        x = train_x,
-        y = train_y,
-        ntree = params_rf$ntree,
-        mtry = params_rf$mtry,
-        nodesize = params_rf$nodesize,
-        importance = T,
-        replace = params_rf$replace
-      )
-    }
+    trained_model = randomForest(
+      x = train_x,
+      y = train_y,
+      ntree = params_rf$ntree,
+      mtry = params_rf$mtry,
+      nodesize = params_rf$nodesize,
+      importance = T,
+      replace = params_rf$replace
+    )
+  }
 
   if (method == "xgb") {
     #convert matrix to dgCMatrix
@@ -85,15 +95,20 @@ train_iimi <- function(
 
   }
 
-  if (method %in% c("rf", "xgb") == F) {
-    stop("`method` must be `rf` or `xgb`.")
+  if (method == "en") {
+    train = cbind(train_y, train_x)
+    colnames(train)[1] = "labels"
+    xx.train = model.matrix(labels ~ ., train)
+    yy.train = as.numeric(as.logical(train_y))
+    foldid <- createFolds(yy.train, k = 5, list = F)
+    trained_model <-
+      cv.glmnet2(xx.train, yy.train, family = "binomial", foldid = foldid)
+
+  }
+
+  if (method %in% c("rf", "xgb", "en") == F) {
+    stop("`method` must be `rf`, `xgb`, or `en`.")
   }
 
   trained_model
 }
-
-
-
-
-
-

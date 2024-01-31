@@ -5,7 +5,7 @@
 \alias{trained_rf}
 \title{A trained model using the default Random Forest settings}
 \format{
-An object of class \code{randomForest.formula} (inherits from \code{randomForest}) of length 19.
+An object of class \code{randomForest.formula} (inherits from \code{randomForest}) of length 15.
 }
 \usage{
 trained_rf

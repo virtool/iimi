@@ -4,21 +4,17 @@
 \alias{predict_iimi}
 \title{predict_iimi()}
 \usage{
-predict_iimi(newdata, method, trained_model, report_result_level = 2)
+predict_iimi(newdata, method, trained_model)
 }
 \arguments{
 \item{newdata}{A matrix or data frame that contains the features extracted
 from the coverage profile using \code{convert_bam_to_cov()}.}
 
-\item{method}{The machine learning method of choice, either Random Forest or
-XGBoost. Default is the XGBoost model}
+\item{method}{The machine learning method of choice, \verb{Random Forest},
+\code{XGBoost}, or \verb{Elastic Net}. Default is \code{XGBoost} model.}
 
-\item{trained_model}{The trained model. If not provided, default model is used}
-
-\item{report_result_level}{Indicate what level of result the result should
-report. "1" reports the segment, isolate, and virus name along with the
-diagnostics result. "2" reports the virus names along with the diagnostics
-result. Default is 2.}
+\item{trained_model}{The trained model. If not provided, default model is
+used.}
 }
 \value{
 A data frame of diagnostics result for each sample

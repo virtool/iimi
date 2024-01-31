@@ -1,10 +1,10 @@
-#' Nucleotide information of 3,138 virus segments
+#' Nucleotide information of virus segments
 #'
 #' A data set containing the GC content and other information about the virus
-#' segments from the official Virtool virus data base. The variables are as
-#' follows:
+#' segments from the official Virtool virus data base (version 1.4.0). The
+#' variables are as follows:
 #'
-#' @format A data frame with 3,138 rows and 7 variables:
+#' @format A data frame with 7 variables:
 #' \describe{
 #'   \item{virus_name}{The virus name}
 #'   \item{iso_id}{The virus isolate ID}
@@ -13,20 +13,30 @@
 #'   \item{C_percent}{The percentage of C nucleotides in the virus segment}
 #'   \item{T_percent}{The percentage of T nucleotides in the virus segment}
 #'   \item{GC_percent}{The percentage of G and C nucleotides in the virus
-#'   segment}
+#'   segment (GC content)}
 #'   \item{seg_len}{The length of the virus segment}
 #'   }
 "nucleotide_info"
 
 
 
-#' The mappability profile of the virus segments
+#' The unreliable regions of the virus segments
 #'
-#' A list of unmappable regions for the 3,138 virus segments.
+#' A data frame of unmappable regions and regions of CG% and A% over 60% and 45%
+#'  respectively for the virus segments. It is worth to note that if a
+#'  virus segment does not have any unreliable regions, that virus segment is not
+#'  shown in this data frame.
 #'
-#' @format A list of 3,138 unmappable regions in the run-length encoding format.
+#' @format A data frame of unreliable regions in the run-length encoding format
+#'  for virus segments.
+#' \describe{
+#'   \item{Start}{The start position of the region that is considered unreliable}
+#'   \item{End}{The end position of the region that is considered unreliable}
+#'   \item{Virus segment}{The virus segment ID}
+#'   \item{Categories}{The category that this unrelible region belong to, which are Unmappable regions (host), Unmappable regions (virus), CG% > 60%, A% > 45%.}
+#' }
 
-"mappability_profile"
+"unreliable_regions"
 
 
 
@@ -55,28 +65,39 @@
 "trained_xgb"
 
 
-#' Known diagnostics result of over 3,000 virus segments
+#' A trained model using the default Elastic Net settings
 #'
-#' A data set containing the known truth about the diagnostics result for each
-#' plant sample. It records whether the sample is infected with a virus segment.
 #'
-#' @format A data frame with 3,138 rows and 21 columns:
+#'
+
+"trained_en"
+
+
+#' Known diagnostics result of virus segments
+#'
+#' A matrix containing the known truth about the diagnostics result for each
+#' plant sample for the example data. It records whether the sample is infected
+#' with a virus segment. Each column is a sample, and each row is a virus
+#' segment's diagnostics status for six samples.
+#'
+#' @format A matrix with 6 columns:
 #' \describe{
-#'   \item{row}{Each row is the name of a virus segment}
-#'   \item{column}{Each column is the name of a plant sample}
+#'   \item{S1}{Sample one}
+#'   \item{S2}{Sample two}
+#'   \item{S3}{Sample three}
+#'   \item{S4}{Sample four}
+#'   \item{S5}{Sample five}
+#'   \item{S6}{Sample six}
 #'   }
 "example_diag"
 
 
-#' Coverage profile of 21 plant samples.
+#' Coverage profiles of six plant samples.
 #'
-#' A list of coverage profiles for 21 plant samples. This is only a toy sample.
+#' A list of coverage profiles for six plant samples. This is only a toy sample.
 #' You can use it for running the examples in the vignette. We recommend using
 #' more data to train the model, the more the better.
 #'
-#' @format A data frame with 3,138 rows and 21 columns:
-#' \describe{
-#'   \item{row}{Each row is the name of a virus segment}
-#'   \item{column}{Each column is the name of a plant sample}
-#'   }
+#' @format A list of 6 run length encoding (RLE) lists for 6 plant samples.
+#'  Each RLE list has the RLE vector of a virus segment
 "example_cov"

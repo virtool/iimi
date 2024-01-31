@@ -3,9 +3,9 @@
 \docType{data}
 \name{nucleotide_info}
 \alias{nucleotide_info}
-\title{Nucleotide information of 3,138 virus segments}
+\title{Nucleotide information of virus segments}
 \format{
-A data frame with 3,138 rows and 7 variables:
+A data frame with 7 variables:
 \describe{
 \item{virus_name}{The virus name}
 \item{iso_id}{The virus isolate ID}
@@ -14,7 +14,7 @@ A data frame with 3,138 rows and 7 variables:
 \item{C_percent}{The percentage of C nucleotides in the virus segment}
 \item{T_percent}{The percentage of T nucleotides in the virus segment}
 \item{GC_percent}{The percentage of G and C nucleotides in the virus
-segment}
+segment (GC content)}
 \item{seg_len}{The length of the virus segment}
 }
 }
@@ -23,7 +23,7 @@ nucleotide_info
 }
 \description{
 A data set containing the GC content and other information about the virus
-segments from the official Virtool virus data base. The variables are as
-follows:
+segments from the official Virtool virus data base (version 1.4.0). The
+variables are as follows:
 }
 \keyword{datasets}
