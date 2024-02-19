@@ -5,10 +5,7 @@
 #' @importFrom stats model.matrix
 #' @importFrom mltools sparsify
 #' @importFrom data.table data.table
-#'
-#'
-#'
-#'
+
 #' @description Uses a machine learning model to predict the infection status
 #'    for the plant sample(s). User can use their own model if needed.
 #'
@@ -20,22 +17,20 @@
 #' used.
 #'
 #' @return A data frame of diagnostics result for each sample
-
-
-predict_iimi <-
-  function(newdata,
-           method,
-           trained_model) {
+predict_iimi <- function(newdata, method, trained_model) {
     if (method == "rf") {
       if (missing(trained_model)) {
-        model = trained_rf
+        model <- trained_rf
       } else {
-        model = trained_model
+        model <- trained_model
       }
-      prediction = predict(newdata = newdata[, -c(1:4)],
-                           model,
-                           importance = T,
-                           type = "prob")
+
+      prediction <- predict(
+        newdata = newdata[, -c(1:4)],
+        model,
+        importance = T,
+        type = "prob"
+      )
 
       result_df <- data.frame(
         Sample_ID = newdata$sample_id,
@@ -49,15 +44,15 @@ predict_iimi <-
     }
 
     if (method == "xgb") {
-      test = sparsify(data.table(newdata[, -c(1:4)]))
+      test <- sparsify(data.table(newdata[, -c(1:4)]))
 
       if (missing(trained_model)) {
-        model = trained_xgb
+        model <- trained_xgb
       } else {
-        model = trained_model
+        model <- trained_model
       }
 
-      prediction = predict(newdata = test, model)
+      prediction <- predict(newdata = test, model)
 
       result_df <- data.frame(
         Sample_ID = newdata$sample_id,
@@ -70,17 +65,17 @@ predict_iimi <-
     }
 
     if (method == "en") {
-      xx.test = cbind(rep(1, nrow(newdata)), newdata[, -c(1:4)])
-      colnames(xx.test)[1] = "labels"
-      test = model.matrix(labels ~ ., xx.test)
+      xx.test <- cbind(rep(1, nrow(newdata)), newdata[, -c(1:4)])
+      colnames(xx.test)[1] <- "labels"
+      test <- model.matrix(labels ~ ., xx.test)
 
       if (missing(trained_model)) {
-        model = trained_en
+        model <- trained_en
       } else {
-        model = trained_model
+        model <- trained_model
       }
 
-      prediction = predict(model,
+      prediction <- predict(model,
                            newx = test,
                            s = "lambda.1se",
                            type = "response")

@@ -2,10 +2,7 @@
 #'
 #' @export
 #' @importFrom graphics lines plot legend
-#'
-#'
-#'
-#'
+
 #' @description Plots the coverage profile of the mapped plant sample.
 #'
 #' @param covs An RLE list of coverage information of one or more plant samples.
@@ -17,7 +14,6 @@
 #' @param window The size of the sliding window. Default is 75.
 #'
 #' @return The coverage profile of the mapped plant sample.
-
 plot_cov <-
   function(covs,
            cex = 0.7,
@@ -25,7 +21,7 @@ plot_cov <-
            legend_status = T,
            window = 75) {
     for (sample in names(covs)) {
-      counter = 1
+      counter <- 1
 
       for (seg in names(covs[[sample]])) {
         plot(
@@ -47,17 +43,19 @@ plot_cov <-
           xlab = ""
         )
 
-        unreliable_regions_seg = unreliable_regions[which(
+        unreliable_regions_seg <- unreliable_regions[which(
           unreliable_regions$`Virus segment` == seg &
             (
               unreliable_regions$Categories == "Unmappable regions (virus)" |
                 unreliable_regions$Categories == "Unmappable regions (host)"
             )
         ),]
+
         if (nrow(unreliable_regions_seg) != 0) {
-          region = c()
+          region <- c()
+
           for (ii in 1:nrow(unreliable_regions_seg)) {
-            region = c(region,
+            region <- c(region,
                        c(unreliable_regions_seg[ii, 1]:unreliable_regions_seg[ii, 2]))
           }
           lines(
@@ -69,11 +67,11 @@ plot_cov <-
         }
 
         if (nucleotide_status) {
-          gc = rowSums(letterFrequencyInSlidingView(virus_segments[[seg]],
+          gc <- rowSums(letterFrequencyInSlidingView(virus_segments[[seg]],
                                                     window,
                                                     c("G", "C"))) / window
 
-          a = rowSums(letterFrequencyInSlidingView(virus_segments[[seg]],
+          a <- rowSums(letterFrequencyInSlidingView(virus_segments[[seg]],
                                                    window,
                                                    c("A"))) / window
 
@@ -104,7 +102,7 @@ plot_cov <-
           }
         }
 
-        counter = counter + 1
+        counter <- counter + 1
       }
     }
   }
