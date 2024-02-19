@@ -6,10 +6,7 @@
 #' @importFrom R.utils seqToIntervals
 #' @importFrom stringr str_split
 #' @importFrom stringr fixed
-#'
-#'
-#'
-#'
+
 #' @description Creates a data frame of start and end positions of the regions
 #'     that are considered unmappable. Unmappable areas indicate that they can
 #'     be mapped to another virus segment or a host genome. Note that we only
@@ -24,10 +21,7 @@
 #'
 #' @return A data frame of start and end positions of the regions that are
 #'     considered unmappable.
-
-
-create_mappability_profile <-
-  function(path_to_bam_files, category, window = 75) {
+create_mappability_profile <- function(path_to_bam_files, category, window = 75) {
     bam_files <-
       list.files(
         path = path_to_bam_files,
@@ -46,6 +40,7 @@ create_mappability_profile <-
       if (nrow(aln_df) == 0) {
         aln_df[nrow(aln_df) + 1, ] <- NA
       }
+
       aln_df$seg_id <-
         sub(pattern = "(.*)\\.sorted.*$",
             replacement = "\\1",
@@ -53,7 +48,7 @@ create_mappability_profile <-
       return(aln_df)
     })
 
-    unreliable_regions = data.frame(matrix(NA, ncol = 4, nrow = 0))
+    unreliable_regions <- data.frame(matrix(NA, ncol = 4, nrow = 0))
 
     for (ii in length(MP_scan)) {
       segment_id <- MP_scan[[ii]]$seg_id[1]
@@ -68,27 +63,31 @@ create_mappability_profile <-
       if (!is.na(MP_scan[[ii]]$qname[1])) {
         for (jj in 1:length(location)) {
           idx <- location[jj]
+
           if (any(regions[idx:(idx + window - 1)] == 0)) {
             regions[idx:(idx + window - 1)] <- 1
           }
         }
       }
+
       regions <- which(regions == 1)
 
       region_index <- seqToIntervals(regions)
 
       for (nn in 1:nrow(region_index)) {
         if (nrow(region_index) != 0) {
-          unreliable_regions <- rbind(unreliable_regions,
-                                      c(region_index[nn, 1],
-                                        region_index[nn, 2],
-                                        segment_id,
-                                        category))
+          unreliable_regions <- rbind(
+            unreliable_regions,
+            c(region_index[nn, 1],
+              region_index[nn, 2],
+              category
+            )
+          )
         }
       }
     }
 
-    colnames(unreliable_regions) = c("Start", "End", "Virus segment", "Categories")
+    colnames(unreliable_regions) <- c("Start", "End", "Virus segment", "Categories")
 
     unreliable_regions
   }

@@ -18,8 +18,6 @@
 #'   }
 "nucleotide_info"
 
-
-
 #' The unreliable regions of the virus segments
 #'
 #' A data frame of unmappable regions and regions of CG% and A% over 60% and 45%
@@ -35,43 +33,28 @@
 #'   \item{Virus segment}{The virus segment ID}
 #'   \item{Categories}{The category that this unrelible region belong to, which are Unmappable regions (host), Unmappable regions (virus), CG% > 60%, A% > 45%.}
 #' }
-
 "unreliable_regions"
-
-
 
 #' The virus segments from the official Virtool virus data base
 #'
 #' A DNAStringSet object of the 3,138 virus segments.
 #'
 #'
-
 "virus_segments"
-
 
 #' A trained model using the default Random Forest settings
 #'
 #'
-
 "trained_rf"
-
-
 
 #' A trained model using the default XGBoost settings
 #'
 #'
 #'
-
 "trained_xgb"
 
-
 #' A trained model using the default Elastic Net settings
-#'
-#'
-#'
-
 "trained_en"
-
 
 #' Known diagnostics result of virus segments
 #'
@@ -91,12 +74,13 @@
 #'   }
 "example_diag"
 
-
 #' Coverage profiles of six plant samples.
 #'
 #' A list of coverage profiles for six plant samples. This is only a toy sample.
 #' You can use it for running the examples in the vignette. We recommend using
 #' more data to train the model, the more the better.
+#'
+#' TODO: Should this be six or ten samples? It contradicts fixstyle.
 #'
 #' @format A list of 6 run length encoding (RLE) lists for 6 plant samples.
 #'  Each RLE list has the RLE vector of a virus segment

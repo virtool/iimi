@@ -1,11 +1,8 @@
-#' @title convert_rle_to_df
-#'
+#' @title convert_rle_to_df#'
 #' @export
-#'
-#'
+
 #' @description Converts a list of run-length encodings (RLEs) into a data frame
-#'     with 16 features after mappability profiling and nucleotide filtering.
-#'
+#'     with 16 features after mappability profiling and nucleotide filtering.#'
 #' @param covs A list of Coverage profile(s) in RLE format. Can be one or more
 #'     samples.
 #' @param unreliable_region_df The unreliable regions of the virus segments.
@@ -20,12 +17,9 @@
 #'     segments that are not included in `nucleotide_info`. The information
 #'     provided must be a data frame that follows the format of
 #'     `nucleotide_info`. Default is an empty data frame.
-#'
-#'
 #' @return A data frame object that contains the mapping result for each virus
 #'     segment that the plant sample reads are aligned to and a RLE list of
 #'     coverage information.
-
 convert_rle_to_df <-
   function(covs,
            unreliable_region_df = unreliable_regions,
@@ -34,11 +28,12 @@ convert_rle_to_df <-
     if (unreliable_region_enabled == T) {
       for (sample in names(covs)) {
         for (seg in names(covs[[sample]])) {
-          unreliable_regions_seg = unreliable_regions[which(unreliable_regions$`Virus segment` == seg),]
+          unreliable_regions_seg <- unreliable_regions[which(unreliable_regions$`Virus segment` == seg),]
+
           if (nrow(unreliable_regions_seg) != 0) {
             for (ii in 1:nrow(unreliable_regions_seg)) {
-              start = unreliable_regions_seg$Start[ii]
-              end = unreliable_regions_seg$End[ii]
+              start <- unreliable_regions_seg$Start[ii]
+              end <- unreliable_regions_seg$End[ii]
 
               covs[[sample]][[seg]][c(start:end)] <- 0
             }
