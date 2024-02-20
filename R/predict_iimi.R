@@ -1,22 +1,22 @@
-#' @title predict_iimi()
+#' Predict the infection status of samples using a machine learning model
 #'
-#' @export
+#' The user can choose between `Random Forest`, `XGBoost`, or `Elastic Net` model. They
+#' can also provide a trained model if they have one. If not, the default model will be
+#' used.
+#'
 #' @importFrom stats predict
 #' @importFrom stats model.matrix
 #' @importFrom mltools sparsify
 #' @importFrom data.table data.table
-
-#' @description Uses a machine learning model to predict the infection status
-#'    for the plant sample(s). User can use their own model if needed.
 #'
 #' @param newdata A matrix or data frame that contains the features extracted
 #'    from the coverage profile using `convert_bam_to_cov()`.
 #' @param method The machine learning method of choice, `Random Forest`,
 #'    `XGBoost`, or `Elastic Net`. Default is `XGBoost` model.
 #' @param trained_model The trained model. If not provided, default model is
-#' used.
-#'
-#' @return A data frame of diagnostics result for each sample
+#' used.#'
+#' @returns A data frame of diagnostics result for each sample
+#' @export
 predict_iimi <- function(newdata, method, trained_model) {
     if (method == "rf") {
       if (missing(trained_model)) {

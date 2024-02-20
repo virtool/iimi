@@ -1,17 +1,19 @@
-#' @title convert_bam_to_rle
-#' @export
-#' @importFrom Rsamtools BamFile
+#' Convert BAM files to run-length encodings (RLEs).
+#'
+#' Converts one or more indexed and sorted BAM files into a run-length encodings (RLEs)
+#' list.
+#'
 #' @importFrom GenomicAlignments readGAlignments
 #' @importFrom GenomicAlignments readGAlignmentPairs
 #' @importFrom IRanges coverage
+#' @importFrom Rsamtools BamFile
 #' @importFrom stats setNames
 
-#' @description Converts one or more indexed and sorted BAM files into a run-
-#'     length encodings (RLEs) list.
 #' @param bam_file path to BAM file(s).
 #' @param paired Indicate if the sequencing paired is single-end or paired-end
 #'     reads. `TRUE` if paired-end. `FALSE` if single-end.#'
-#' @return A list of coverage profile(s) in RLE format with one or more samples.
+#' @returns A list of coverage profile(s) in RLE format with one or more samples.
+#' @export
 convert_bam_to_rle <- function(bam_file, paired = F) {
   covs <- setNames(
     lapply(bam_file,

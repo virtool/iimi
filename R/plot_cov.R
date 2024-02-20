@@ -1,9 +1,6 @@
-#' @title plot_cov()
+#' Plot the coverage profile of the mapped plant sample.
 #'
-#' @export
 #' @importFrom graphics lines plot legend
-
-#' @description Plots the coverage profile of the mapped plant sample.
 #'
 #' @param covs An RLE list of coverage information of one or more plant samples.
 #' @param cex The size of the main title.
@@ -12,8 +9,7 @@
 #' @param legend_status Whether display the legend of the plot. Default is
 #'     `TRUE`.
 #' @param window The size of the sliding window. Default is 75.
-#'
-#' @return The coverage profile of the mapped plant sample.
+#' @export
 plot_cov <-
   function(covs,
            cex = 0.7,

@@ -1,21 +1,22 @@
-#' @title create_high_nucleotide_content
+#' Create high nucleotide content data frame
 #'
-#' @export
+#' Creates a data frame of the start and end positions of the regions_a that are
+#' considered high in A% and GC%.
+#'
 #' @importFrom R.utils seqToIntervals
 #' @importFrom stringr str_split
 #' @importFrom stringr fixed
 #' @importFrom Biostrings letterFrequencyInSlidingView
-
-#' @description Creates a data frame of the start and end positions of the
-#'     regions_a that are considered high in A% and GC%.
+#'
 #' @param gc The threshold for GC content. It is the proportion of G and C
 #'     nucleotides in a sliding window. Default is 0.6.
 #' @param a The threshold for A nucleotide. It is the proportion of A nucleotide
 #'     in a sliding window. Default is 0.45.
 #' @param window The sliding window size of your choice. Default is 75.
 #'
-#' @return A data frame of the start and end positions of the regions_a that are
+#' @returns A data frame of the start and end positions of the regions_a that are
 #'     considered high in A% and GC%.
+#' @export
 create_high_nucleotide_content <- function(gc = 0.6, a = 0.45, window = 75) {
     unreliable_regions <- data.frame(matrix(NA, ncol = 4, nrow = 0))
 
