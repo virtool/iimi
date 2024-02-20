@@ -1,16 +1,14 @@
-#' @title create_mappability_profile
+#' Create mappability profile
 #'
-#' @export
+#' Creates a data frame of start and end positions of the regions that are considered
+#' unmappable. Unmappable areas indicate that they can be mapped to another virus
+#' segment or a host genome. Note that we only have Arabidopsis Thaliana as a host.
+#'
 #' @importFrom Rsamtools BamFile
 #' @importFrom Rsamtools scanBam
 #' @importFrom R.utils seqToIntervals
 #' @importFrom stringr str_split
 #' @importFrom stringr fixed
-
-#' @description Creates a data frame of start and end positions of the regions
-#'     that are considered unmappable. Unmappable areas indicate that they can
-#'     be mapped to another virus segment or a host genome. Note that we only
-#'     have Arabidopsis Thaliana as a host.
 #'
 #' @param path_to_bam_files Path to the folder that stores the indexed and
 #'     sorted BAM file(s).
@@ -19,8 +17,9 @@
 #'     in your own way.
 #' @param window The sliding window size of your choice. Default is 75.
 #'
-#' @return A data frame of start and end positions of the regions that are
+#' @returns A data frame of start and end positions of the regions that are
 #'     considered unmappable.
+#' @export
 create_mappability_profile <- function(path_to_bam_files, category, window = 75) {
     bam_files <-
       list.files(

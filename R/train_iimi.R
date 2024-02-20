@@ -1,6 +1,21 @@
-#' @title train_iimi()
+#' Train an IIMI model
 #'
-#' @export
+#' Trains a `XGBoost` (default), `Random Forest`, or `Elastic Net` model using
+#' user-provided data.
+#'
+#' Default for `XGBooost` model is:
+#'     \itemize{
+#'         \item{`nrounds = 100, max_depth = 10, gamma = 6`}
+#' }
+#' Default for `Random Forest` model is:
+#' \itemize{
+#'     \item{`ntree = 100, nodesize = 1, replace = T, mtry = floor(sqrt(ncol(train_x))))`}
+#' }
+#' Default for `Elastic Net` model is:
+#' \itemize{
+#'     \item{`family = "binomial"`}
+#' }
+#'
 #' @importFrom randomForest randomForest
 #' @importFrom mltools sparsify
 #' @importFrom xgboost xgboost
@@ -9,19 +24,6 @@
 #' @importFrom caret createFolds
 #' @importFrom stats model.matrix
 
-#' @description Trains a `XGBoost` (default), `Random Forest`, or `Elastic Net`
-#'     model using user-provided data. Default for `XGBooost` model is:
-#'     \itemize{
-#'         \item{`nrounds = 100, max_depth = 10, gamma = 6`}
-#'     }
-#'     Default for `Random Forest` model is:
-#'     \itemize{
-#'         \item{`ntree = 100, nodesize = 1, replace = T, mtry = floor(sqrt(ncol(train_x))))`}
-#'     }
-#'     Default for `Elastic Net` model is:
-#'     \itemize{
-#'         \item{`family = "binomial"`}
-#'     }
 #' @param train_x A data frame or a matrix of predictors
 #' @param train_y A response vector of labels (needs to be a factor)
 #' @param method The machine learning method of choice, `Random Forest` or
@@ -31,8 +33,8 @@
 #' @param nrounds_xgb Max number of boosting iterations
 #' @param params_xgb A list of parameters to train an `XGBoost` model in
 #'     `train_iimi()`
-#'
-#' @return A `Random Forest`, `XGBoost`, `Elastic Net` model
+#' @returns A `Random Forest`, `XGBoost`, `Elastic Net` model
+#' @export
 train_iimi <- function(train_x,
                        train_y,
                        method = "xgb",
