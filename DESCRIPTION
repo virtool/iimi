@@ -29,6 +29,7 @@ Imports:
     IRanges,
     knitr,
     mltools,
+    MTPS,
     randomForest,
     Rsamtools,
     stats,
