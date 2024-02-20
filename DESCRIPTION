@@ -22,20 +22,22 @@ LazyData: true
 VignetteBuilder: knitr
 Imports:
     Biostrings,
+    caret,
     data.table,
+    dplyr,
     GenomicAlignments,
     IRanges,
-    knitr
+    knitr,
     mltools,
     randomForest,
     Rsamtools,
     stats,
-    xgboost,
+    xgboost
 Depends:
   R (>= 3.5.0)
-Suggests: 
-    testthat (>= 3.0.0),
+Suggests:
     rmarkdown
+    testthat (>= 3.0.0),
 Config/testthat/edition: 3
 License: MIT + file LICENSE
 LazyDataCompression: xz
