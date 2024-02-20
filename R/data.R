@@ -1,10 +1,10 @@
-#' Nucleotide information of virus segments
+#' Nucleotide information for the virus sequences
 #'
 #' A data set containing the GC content and other information about the virus
 #' segments from the official Virtool virus data base (version 1.4.0). The
 #' variables are as follows:
 #'
-#' @format A data frame with 7 variables:
+#' @format A data frame with 8 variables:
 #' \describe{
 #'   \item{virus_name}{The virus name}
 #'   \item{iso_id}{The virus isolate ID}
@@ -14,16 +14,15 @@
 #'   \item{T_percent}{The percentage of T nucleotides in the virus segment}
 #'   \item{GC_percent}{The percentage of G and C nucleotides in the virus
 #'   segment (GC content)}
-#'   \item{seg_len}{The length of the virus segment}
+#'   \item{seg_len}{The length of the virus sequences}
 #'   }
 "nucleotide_info"
 
-#' The unreliable regions of the virus segments
+#' The unreliable regions of the virus sequences
 #'
-#' A data frame of unmappable regions and regions of CG% and A% over 60% and 45%
-#'  respectively for the virus segments. It is worth to note that if a
-#'  virus segment does not have any unreliable regions, that virus segment is not
-#'  shown in this data frame.
+#' A data frame of unmappable regions and regions of GC% and A% over 60% and 45%
+#' respectively for the virus segments. If a sequence does not have any unreliable
+#' regions, it will not be present in this data frame.
 #'
 #' @format A data frame of unreliable regions in the run-length encoding format
 #'  for virus segments.
@@ -37,23 +36,16 @@
 
 #' The virus segments from the official Virtool virus data base
 #'
-#' A DNAStringSet object of the 3,138 virus segments.
-#'
-#'
+#' @format A DNAStringSet object of the 3,138 virus segments.
 "virus_segments"
 
-#' A trained model using the default Random Forest settings
-#'
-#'
+#' A model trained using the default Random Forest settings.
 "trained_rf"
 
-#' A trained model using the default XGBoost settings
-#'
-#'
-#'
+#' A model trained using the default XGBoost settings.
 "trained_xgb"
 
-#' A trained model using the default Elastic Net settings
+#' A model trained using the default Elastic Net settings.
 "trained_en"
 
 #' Known diagnostics result of virus segments
