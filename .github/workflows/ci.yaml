@@ -21,7 +21,7 @@ jobs:
       - name: Setup R Dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: |
-            devtools
+          extra-packages: devtools, any::pkgdown, local::.
+          needs: website
       - name: Load
         run: R -e 'devtools::load_all()'
