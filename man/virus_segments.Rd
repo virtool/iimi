@@ -3,14 +3,14 @@
 \docType{data}
 \name{virus_segments}
 \alias{virus_segments}
-\title{The virus segments from the official Virtool virus data base}
+\title{A DNAStringSet of virus segments from the Virtool virus data base (version 1.4.0)}
 \format{
-An object of class \code{DNAStringSet} of length 3138.
+An object of class \code{DNAStringSet} of length 5531.
 }
 \usage{
 virus_segments
 }
 \description{
-A DNAStringSet object of the 3,138 virus segments.
+A DNAStringSet of virus segments from the Virtool virus data base (version 1.4.0)
 }
 \keyword{datasets}

@@ -4,7 +4,7 @@
 \alias{create_high_nucleotide_content}
 \title{create_high_nucleotide_content}
 \usage{
-create_high_nucleotide_content(gc = 0.6, a = 0.45, window = 75)
+create_high_nucleotide_content(gc = 0.6, a = 0.45, window = 75, virus_info)
 }
 \arguments{
 \item{gc}{The threshold for GC content. It is the proportion of G and C
@@ -14,6 +14,8 @@ nucleotides in a sliding window. Default is 0.6.}
 in a sliding window. Default is 0.45.}
 
 \item{window}{The sliding window size of your choice. Default is 75.}
+
+\item{virus_info}{A DNAStringSet of virus segments. The format should be similar to \code{virus_segments}.}
 }
 \value{
 A data frame of the start and end positions of the regions_a that are
@@ -22,4 +24,8 @@ considered high in A\% and GC\%.
 \description{
 Creates a data frame of the start and end positions of the
 regions_a that are considered high in A\% and GC\%.
+}
+\examples{
+\dontrun{high_nucleotides_regions <- create_high_nucleotide_content()}
+
 }

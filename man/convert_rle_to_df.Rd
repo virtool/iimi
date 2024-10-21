@@ -2,11 +2,11 @@
 % Please edit documentation in R/convert_rle_to_df.R
 \name{convert_rle_to_df}
 \alias{convert_rle_to_df}
-\title{convert_rle_to_df}
+\title{Convert run-length encodings (RLEs) to a data frame.}
 \usage{
 convert_rle_to_df(
   covs,
-  unreliable_region_df = unreliable_regions,
+  unreliable_region_version = "1_4_0",
   unreliable_region_enabled = TRUE,
   additional_nucleotide_info = data.frame()
 )
@@ -15,8 +15,8 @@ convert_rle_to_df(
 \item{covs}{A list of Coverage profile(s) in RLE format. Can be one or more
 samples.}
 
-\item{unreliable_region_df}{The unreliable regions of the virus segments.
-Default is \code{unreliable_regions}. It includes the mappability profile from
+\item{unreliable_region_version}{The version number (character string) of unreliable regions of the virus segments.
+Default is \verb{1_4_0}. It includes the mappability profile from
 a host genome (we only have Arabidopsis thaliana right now) and virus
 references, and the regions that have CG\% and A\% over 60\% and 45\%
 respectively.}
@@ -38,4 +38,16 @@ coverage information.
 \description{
 Converts a list of run-length encodings (RLEs) into a data frame
 with 16 features after mappability profiling and nucleotide filtering.
+}
+\details{
+Converts a list of run-length encodings (RLEs) into a data frame.
+
+The returned dataframe contains 16 features for training a machine learning model.
+after mappability profiling and nucleotide filtering.
+}
+\examples{
+\dontrun{
+df <- convert_rle_to_df(example_cov)
+}
+
 }

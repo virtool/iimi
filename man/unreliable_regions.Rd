@@ -11,7 +11,10 @@ for virus segments.
 \item{Start}{The start position of the region that is considered unreliable}
 \item{End}{The end position of the region that is considered unreliable}
 \item{Virus segment}{The virus segment ID}
-\item{Categories}{The category that this unrelible region belong to, which are Unmappable regions (host), Unmappable regions (virus), CG\% > 60\%, A\% > 45\%.}
+\item{Categories}{The category that this unrelible region belong to, which
+are Unmappable regions (host), Unmappable regions (virus), CG\% > 60\%, A\% > 45\%}
+\item{1_4_0}{The version number of the virus database}
+\item{1_5_0}{The version number of the virus database}
 }
 }
 \usage{

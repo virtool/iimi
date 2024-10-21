@@ -3,19 +3,16 @@
 \docType{data}
 \name{example_cov}
 \alias{example_cov}
-\title{Coverage profile of 21 plant samples.}
+\title{Coverage profiles of three plant samples.}
 \format{
-A data frame with 3,138 rows and 21 columns:
-\describe{
-\item{row}{Each row is the name of a virus segment}
-\item{column}{Each column is the name of a plant sample}
-}
+A list of 3 run length encoding (RLE) lists for 3 plant samples.
+Each RLE list has the RLE vector of a virus segment
 }
 \usage{
 example_cov
 }
 \description{
-A list of coverage profiles for 21 plant samples. This is only a toy sample.
+A list of coverage profiles for three plant samples. This is only a toy sample.
 You can use it for running the examples in the vignette. We recommend using
 more data to train the model, the more the better.
 }

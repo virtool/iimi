@@ -1,21 +1,6 @@
-#' Train an IIMI model
+#' @title train_iimi()
 #'
-#' Trains a `XGBoost` (default), `Random Forest`, or `Elastic Net` model using
-#' user-provided data.
-#'
-#' Default for `XGBooost` model is:
-#'     \itemize{
-#'         \item{`nrounds = 100, max_depth = 10, gamma = 6`}
-#' }
-#' Default for `Random Forest` model is:
-#' \itemize{
-#'     \item{`ntree = 100, nodesize = 1, replace = T, mtry = floor(sqrt(ncol(train_x))))`}
-#' }
-#' Default for `Elastic Net` model is:
-#' \itemize{
-#'     \item{`family = "binomial"`}
-#' }
-#'
+#' @export
 #' @importFrom randomForest randomForest
 #' @importFrom mltools sparsify
 #' @importFrom xgboost xgboost
@@ -23,83 +8,98 @@
 #' @importFrom MTPS cv.glmnet2
 #' @importFrom caret createFolds
 #' @importFrom stats model.matrix
-
-#' @param train_x A data frame or a matrix of predictors
-#' @param train_y A response vector of labels (needs to be a factor)
+#'
+#'
+#' @examples
+#' \dontrun{
+#' df <- convert_rle_to_df(example_cov)
+#' train_x <- df[,-c(1:4)]
+#' train_y = c()
+#' for (ii in 1:nrow(df)) {
+#'   seg_id = df$seg_id[ii]
+#'   sample_id = df$sample_id[ii]
+#'   train_y = c(train_y, example_diag[seg_id, sample_id])
+#' }
+#' trained_model <- train_iimi(train_x = train_x, train_y = train_y)
+#' }
+#'
+#'
+#'
+#'
+#' @description Trains a `XGBoost` (default), `Random Forest`, or `Elastic Net`
+#'     model using user-provided data.
+#'
+#'
+#' @param train_x A data frame or a matrix of predictors.
+#' @param train_y A response vector of labels (needs to be a factor).
 #' @param method The machine learning method of choice, `Random Forest` or
-#'     `XGBoost`, or `Elastic Net`. Default is `XGBoost`.
-#' @param params_rf A list of parameters to train a `Random Forest` model in
-#'     `train_iimi()`
-#' @param nrounds_xgb Max number of boosting iterations
-#' @param params_xgb A list of parameters to train an `XGBoost` model in
-#'     `train_iimi()`
-#' @returns A `Random Forest`, `XGBoost`, `Elastic Net` model
-#' @export
+#'     `XGBoost`, or `Elastic Net` model. Default is `XGBoost` model.
+#' @param nrounds Max number of boosting iterations for `XGBoost` model. Default
+#'     is 100.
+#' @param min_child_weight Default is 10.
+#' @param gamma Minimum loss reduction required in `XGBoost` model. Default is 20.
+#' @param ntree Number of trees in `Random Forest` model. Default is 100.
+#' @param mtry Default is 10.
+#' @param k Number of folds. Default is 5.
+#' @param \dots Other arguments that can be passed to \code{randomForest},
+#'     \code{xgboost}, or \code{glmnet}.
+#'
+#' @return A `Random Forest`, `XGBoost`, `Elastic Net` model
+
+
+
+
+
+
 train_iimi <- function(train_x,
                        train_y,
                        method = "xgb",
-                       params_rf = list(
-                         ntree = 100,
-                         nodesize = 1,
-                         replace = T,
-                         mtry = floor(sqrt(ncol(train_x)))
-                       ),
-                       nrounds_xgb = 100,
-                       params_xgb = list(max_depth = 10, gamma = 6)
-) {
+                       nrounds = 100,
+                       min_child_weight = 10,
+                       gamma = 20,
+                       ntree = 200,
+                       mtry = 10,
+                       k = 5,
+                       ...) {
   if (method == "rf") {
-    # take in default parameters if no parameters are set
-    if ("sampsize" %in% names(params_rf)) {
-      trained_model <- randomForest(
-        x = train_x,
-        y = train_y,
-        ntree = params_rf$ntree,
-        mtry = params_rf$mtry,
-        nodesize = params_rf$nodesize,
-        sampsize = params_rf$sampsize,
-        importance = T,
-        replace = params_rf$replace
-      )
-    } else {
-      trained_model <- randomForest(
-        x = train_x,
-        y = train_y,
-        ntree = params_rf$ntree,
-        mtry = params_rf$mtry,
-        nodesize = params_rf$nodesize,
-        importance = T,
-        replace = params_rf$replace
-      )
-    }
+    trained_model = randomForest(
+      x = train_x[, -c(1:4)],
+      y = train_y,
+      ntree = ntree,
+      mtry = mtry,
+      ...
+    )
   }
 
   if (method == "xgb") {
-    #convert matrix to dgCMatrix
-    xgbtrain <- sparsify(data.table(train_x))
+    xgbtrain <- sparsify(data.table(train_x[, -c(1:4)]))
     xgblabel <- as.numeric(as.logical(train_y))
 
-    trained_model <- xgboost(
+    trained_model = xgboost(
       data = xgbtrain,
       label = xgblabel,
       objective = "binary:logistic",
-      nrounds = nrounds_xgb,
-      params = params_xgb
+      nrounds = nrounds,
+      min_child_weight = min_child_weight,
+      gamma = gamma,
+      ...
     )
+
   }
 
   if (method == "en") {
-    train <- cbind(train_y, train_x)
-    colnames(train)[1] <- "labels"
-    xx.train <- model.matrix(labels ~ ., train)
-    yy.train <- as.numeric(as.logical(train_y))
-    foldid <- createFolds(yy.train, k = 5, list = F)
+    train = cbind(train_y, train_x[,-c(1:4)])
+    colnames(train)[1] = "labels"
+    xx.train = model.matrix(labels ~ ., train)[,-1]
+    yy.train = as.numeric(as.logical(train_y))
+    foldid <- createFolds(yy.train, k = k, list = F)
+    trained_model <-
+      cv.glmnet2(xx.train,
+                 yy.train,
+                 family = "binomial",
+                 foldid = foldid,
+                 ...)
 
-    trained_model <- cv.glmnet2(
-      xx.train,
-      yy.train,
-      family = "binomial",
-      foldid = foldid
-    )
   }
 
   if (method %in% c("rf", "xgb", "en") == F) {

@@ -4,17 +4,24 @@
 \alias{create_mappability_profile}
 \title{create_mappability_profile}
 \usage{
-create_mappability_profile(path_to_bam_files, category, window = 75)
+create_mappability_profile(
+  path_to_bam_files,
+  category,
+  window = 75,
+  virus_info
+)
 }
 \arguments{
 \item{path_to_bam_files}{Path to the folder that stores the indexed and
-sorted BAM file(s).}
+sorted BAM file(s) (ending in \verb{*.sorted.bam} and \verb{*.bai}).}
 
 \item{category}{Type of unreliable region you are creating. You can use
 categories in the provided \code{unreliable_regions} data frame or customize
 in your own way.}
 
 \item{window}{The sliding window size of your choice. Default is 75.}
+
+\item{virus_info}{A DNAStringSet of virus segments. The format should be similar to \code{virus_segments}.}
 }
 \value{
 A data frame of start and end positions of the regions that are
@@ -25,4 +32,13 @@ Creates a data frame of start and end positions of the regions
 that are considered unmappable. Unmappable areas indicate that they can
 be mapped to another virus segment or a host genome. Note that we only
 have Arabidopsis Thaliana as a host.
+}
+\examples{
+\dontrun{
+## Please change the path to your folder where you store the mapped viruses
+mappability_profile <- create_mappability_profile("path/to/folder",
+  category = "Unmappable regions")
+}
+
+
 }

@@ -7,6 +7,12 @@ utils::globalVariables(
     "virus_segments",
     "trained_rf",
     "trained_en",
-    "trained_xgb"
+    "trained_xgb",
+    "Sample_ID",
+    "Virus_name",
+    "Segment_ID",
+    "Isolate_ID",
+    "Prediction",
+    "virus_segments"
   )
 )

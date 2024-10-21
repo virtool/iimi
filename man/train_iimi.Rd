@@ -8,43 +8,60 @@ train_iimi(
   train_x,
   train_y,
   method = "xgb",
-  params_rf = list(ntree = 100, nodesize = 1, replace = T, mtry =
-    floor(sqrt(ncol(train_x)))),
-  nrounds_xgb = 100,
-  params_xgb = list(max_depth = 10, gamma = 6)
+  nrounds = 100,
+  min_child_weight = 10,
+  gamma = 20,
+  ntree = 200,
+  mtry = 10,
+  k = 5,
+  ...
 )
 }
 \arguments{
-\item{train_x}{A data frame or a matrix of predictors}
+\item{train_x}{A data frame or a matrix of predictors.}
 
-\item{train_y}{A response vector of labels (needs to be a factor)}
+\item{train_y}{A response vector of labels (needs to be a factor).}
 
 \item{method}{The machine learning method of choice, \verb{Random Forest} or
-\code{XGBoost}, or \verb{Elastic Net}. Default is \code{XGBoost}.}
+\code{XGBoost}, or \verb{Elastic Net} model. Default is \code{XGBoost} model.}
 
-\item{params_rf}{A list of parameters to train a \verb{Random Forest} model in
-\code{train_iimi()}}
+\item{nrounds}{Max number of boosting iterations for \code{XGBoost} model. Default
+is 100.}
 
-\item{nrounds_xgb}{Max number of boosting iterations}
+\item{min_child_weight}{Default is 10.}
 
-\item{params_xgb}{A list of parameters to train an \code{XGBoost} model in
-\code{train_iimi()}}
+\item{gamma}{Minimum loss reduction required in \code{XGBoost} model. Default is 20.}
+
+\item{ntree}{Number of trees in \verb{Random Forest} model. Default is 100.}
+
+\item{mtry}{Default is 10.}
+
+\item{k}{Number of folds. Default is 5.}
+
+\item{\dots}{Other arguments that can be passed to \code{randomForest},
+\code{xgboost}, or \code{glmnet}.}
 }
 \value{
 A \verb{Random Forest}, \code{XGBoost}, \verb{Elastic Net} model
 }
 \description{
 Trains a \code{XGBoost} (default), \verb{Random Forest}, or \verb{Elastic Net}
-model using user-provided data. Default for \code{XGBooost} model is:
-\itemize{
-\item{\verb{nrounds = 100, max_depth = 10, gamma = 6}}
+model using user-provided data.
 }
-Default for \verb{Random Forest} model is:
-\itemize{
-\item{\verb{ntree = 100, nodesize = 1, replace = T, mtry = floor(sqrt(ncol(train_x))))}}
+\examples{
+\dontrun{
+df <- convert_rle_to_df(example_cov)
+train_x <- df[,-c(1:4)]
+train_y = c()
+for (ii in 1:nrow(df)) {
+  seg_id = df$seg_id[ii]
+  sample_id = df$sample_id[ii]
+  train_y = c(train_y, example_diag[seg_id, sample_id])
 }
-Default for \verb{Elastic Net} model is:
-\itemize{
-\item{\code{family = "binomial"}}
+trained_model <- train_iimi(train_x = train_x, train_y = train_y)
 }
+
+
+
+
 }

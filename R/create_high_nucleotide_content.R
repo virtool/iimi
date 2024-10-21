@@ -1,42 +1,51 @@
-#' Create high nucleotide content data frame
+#' @title create_high_nucleotide_content
 #'
-#' Creates a data frame of the start and end positions of the regions_a that are
-#' considered high in A% and GC%.
-#'
+#' @export
 #' @importFrom R.utils seqToIntervals
 #' @importFrom stringr str_split
 #' @importFrom stringr fixed
 #' @importFrom Biostrings letterFrequencyInSlidingView
 #'
+#' @examples
+#' \dontrun{high_nucleotides_regions <- create_high_nucleotide_content()}
+#'
+#' @description Creates a data frame of the start and end positions of the
+#'     regions_a that are considered high in A% and GC%.
 #' @param gc The threshold for GC content. It is the proportion of G and C
 #'     nucleotides in a sliding window. Default is 0.6.
 #' @param a The threshold for A nucleotide. It is the proportion of A nucleotide
 #'     in a sliding window. Default is 0.45.
 #' @param window The sliding window size of your choice. Default is 75.
+#' @param virus_info A DNAStringSet of virus segments. The format should be similar to `virus_segments`.
 #'
-#' @returns A data frame of the start and end positions of the regions_a that are
+#' @return A data frame of the start and end positions of the regions_a that are
 #'     considered high in A% and GC%.
-#' @export
-create_high_nucleotide_content <- function(gc = 0.6, a = 0.45, window = 75) {
-    unreliable_regions <- data.frame(matrix(NA, ncol = 4, nrow = 0))
 
-    for (ii in 1:length(virus_segments)) {
-      segment <- names(virus_segments)[ii]
-      seq <- virus_segments[[segment]]
-      gc_seq <- rowSums(letterFrequencyInSlidingView(seq, window, c("G", "C"))) /
+
+create_high_nucleotide_content <-
+  function(gc = 0.6,
+           a = 0.45,
+           window = 75,
+           virus_info) {
+    unreliable_regions = data.frame(matrix(NA, ncol = 4, nrow = 0))
+
+    for (ii in 1:length(virus_info)) {
+      segment <- names(virus_info)[ii]
+      seq <- virus_info[[segment]]
+      gc_seq = rowSums(letterFrequencyInSlidingView(seq, window, c("G", "C"))) /
         window
-      a_seq <- rowSums(letterFrequencyInSlidingView(seq, window, c("A"))) /
+      a_seq = rowSums(letterFrequencyInSlidingView(seq, window, c("A"))) /
         window
 
-      regions_gc <- rep(0, nchar(seq))
 
+      regions_gc <- rep(0, nchar(as.character(seq)))
       for (jj in 1:length(gc_seq)) {
         if (gc_seq[jj] > gc) {
           regions_gc[jj:(jj + window - 1)] <- 1
         }
       }
-
       regions_gc <- which(regions_gc == 1)
+
       region_gc_index <- seqToIntervals(regions_gc)
 
       for (nn in 1:nrow(region_gc_index)) {
@@ -53,14 +62,12 @@ create_high_nucleotide_content <- function(gc = 0.6, a = 0.45, window = 75) {
         }
       }
 
-      regions_a <- rep(0, nchar(seq))
-
+      regions_a <- rep(0, nchar(as.character(seq)))
       for (jj in 1:length(a_seq)) {
         if (a_seq[jj] > a) {
           regions_a[jj:(jj + window - 1)] <- 1
         }
       }
-
       regions_a <- which(regions_a == 1)
 
       region_a_index <- seqToIntervals(regions_a)
@@ -73,7 +80,6 @@ create_high_nucleotide_content <- function(gc = 0.6, a = 0.45, window = 75) {
               region_a_index[nn, 1],
               region_a_index[nn, 2],
               segment,
-              # TODO: Figure out if this should be "A% > 45%" or category[2].
               "A% > 45%"
             )
           )
@@ -82,7 +88,13 @@ create_high_nucleotide_content <- function(gc = 0.6, a = 0.45, window = 75) {
 
     }
 
-    colnames(unreliable_regions) <- c("Start", "End", "Virus segment", "Categories")
+    colnames(unreliable_regions) = c("Start", "End", "Virus segment", "Categories")
+
+    unreliable_regions$Start <- as.numeric(unreliable_regions$Start)
+    unreliable_regions$End <- as.numeric(unreliable_regions$End)
+    unreliable_regions$`Virus segment` <- as.factor(unreliable_regions$`Virus segment`)
+    unreliable_regions$Categories <- as.factor(unreliable_regions$Categories)
 
     unreliable_regions
+
   }

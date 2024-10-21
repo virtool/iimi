@@ -6,28 +6,38 @@
 \usage{
 plot_cov(
   covs,
-  cex = 0.7,
-  nucleotide_status = T,
-  legend_status = T,
-  window = 75
+  legend_status = TRUE,
+  nucleotide_status = TRUE,
+  window = 75,
+  nucleotide_info_version = "1_4_0",
+  ...
 )
 }
 \arguments{
 \item{covs}{An RLE list of coverage information of one or more plant samples.}
 
-\item{cex}{The size of the main title.}
+\item{legend_status}{Whether display legend. Default is \code{TRUE}.}
 
-\item{nucleotide_status}{Whether display the percentages of A nucleotide and GC
-content. Default is \code{TRUE}.}
+\item{nucleotide_status}{Whether display a sliding window of A percentage and
+CG content. Default is \code{TRUE}.}
 
-\item{legend_status}{Whether display the legend of the plot. Default is
-\code{TRUE}.}
+\item{window}{The sliding window size. Default is 75.}
 
-\item{window}{The size of the sliding window. Default is 75.}
+\item{nucleotide_info_version}{The version number (character string) of the
+nucleotide information of the virus segments. Default is \verb{1_4_0}.}
+
+\item{\dots}{Other arguments that can be passed to \code{plot},
+\code{lines}, or \code{legend}.}
 }
 \value{
 The coverage profile of the mapped plant sample.
 }
 \description{
 Plots the coverage profile of the mapped plant sample.
+}
+\examples{
+plot_cov(example_cov$S1)
+
+
+
 }

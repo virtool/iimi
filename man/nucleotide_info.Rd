@@ -16,6 +16,8 @@ A data frame with 7 variables:
 \item{GC_percent}{The percentage of G and C nucleotides in the virus
 segment (GC content)}
 \item{seg_len}{The length of the virus segment}
+\item{1_4_0}{The version number of the virus database}
+\item{1_5_0}{The version number of the virus database}
 }
 }
 \usage{
