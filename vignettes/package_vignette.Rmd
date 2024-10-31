@@ -29,14 +29,15 @@ First, let's install necessary packages. You may skip this step if you have
 installed the packages before.
 
 ```{r, warning=FALSE, message=FALSE, eval=FALSE}
-# install iimi
-install.packages(c("iimi", "dplyr"))
-
 # install Biostrings
 if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
+BiocManager::install(c("GenomicAlignments", "Rsamtools"))
 BiocManager::install("Biostrings")
+
+# install iimi
+install.packages(c("iimi", "dplyr"))
 ```
 
 ### 1.2. Loading packages
