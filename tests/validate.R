@@ -54,12 +54,15 @@ for (i in 1:5) {
 
     test_y_virus_level <- test_df %>%
         group_by(virus_name) %>%
-        summarize(detect_result = any(detect_result)) %>%
-        select(detect_result)
+        summarize(detect_result = any(detect_result)) %>% select(detect_result)
+
+    prediction <- prediction %>%
+     group_by(Virus_name) %>% summarize(Prediction = any(Prediction)) %>% select(Prediction)
 
     y_pred <- as.logical(prediction$Prediction)
 
     fold_metrics <- compute_metrics(test_y_virus_level, y_pred)
+    # fold_metrics <- compute_metrics(test_y, y_pred)
     metrics[i, ] <- c(fold_metrics$precision, fold_metrics$recall, fold_metrics$f1)
 
     predictions[[i]] <- prediction
