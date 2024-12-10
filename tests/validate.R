@@ -17,8 +17,8 @@ print(paste("Unique virus count:", length(unique(df$virus_name))))
 # ----------------------------------------------------------------
 
 F1_score <- function(y_true, y_pred) {
-    precision <- sum(pred & true) / sum(pred)
-    recall <- sum(pred & true) / sum(true)
+    precision <- sum(y_pred & y_true) / sum(y_pred)
+    recall <- sum(y_pred & y_true) / sum(y_true)
     f1 <- 2 * (precision * recall) / (precision + recall)
 
     return(f1)
@@ -56,8 +56,8 @@ for (i in 1:5) {
         summarize(detect_result = any(detect_result)) %>%
         select(detect_result)
 
-    pred <- as.logical(prediction$Prediction)
-    f1_scores[i] <- F1_score(test_y_virus, pred)
+    y_pred <- as.logical(prediction$Prediction)
+    f1_scores[i] <- F1_score(test_y_virus, y_pred)
 
     predictions[[i]] <- prediction
 }
