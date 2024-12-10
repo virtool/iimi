@@ -1,5 +1,6 @@
 library(iimi)
 library(caret)
+library(dplyr)
 
 set.seed(11723)
 
@@ -8,7 +9,7 @@ set.seed(11723)
 data_path <- "/Users/brycedavidson/Repos/iimi/data/model_data.rda"
 df <- get(load(data_path))
 label <- "detect_result"
-df$detect_result <- as.logical(df$detect_result) # Convert detect_result to logical
+df$detect_result <- as.logical(df$detect_result)
 
 # ----------------------------------------------------------------
 
@@ -16,19 +17,19 @@ print(paste("Unique virus count:", length(unique(df$virus_name))))
 
 # ----------------------------------------------------------------
 
-F1_score <- function(y_true, y_pred) {
+compute_metrics <- function(y_true, y_pred) {
     precision <- sum(y_pred & y_true) / sum(y_pred)
     recall <- sum(y_pred & y_true) / sum(y_true)
     f1 <- 2 * (precision * recall) / (precision + recall)
-
-    return(f1)
+    return(list(precision = precision, recall = recall, f1 = f1))
 }
 
 # ----------------------------------------------------------------
 
-folds <- createFolds(df$sample_id, k = 5)
+k <- 5
+folds <- createFolds(df$sample_id, k = k)
 predictions <- list()
-f1_scores <- numeric(5)
+metrics <- data.frame(precision = numeric(k), recall = numeric(k), f1 = numeric(k))
 
 for (i in 1:5) {
     train_indices <- folds[[i]]
@@ -51,18 +52,23 @@ for (i in 1:5) {
 
     # -------------------------------
 
-    test_y_virus <- test_df %>%
+    test_y_virus_level <- test_df %>%
         group_by(virus_name) %>%
         summarize(detect_result = any(detect_result)) %>%
         select(detect_result)
 
     y_pred <- as.logical(prediction$Prediction)
-    f1_scores[i] <- F1_score(test_y_virus, y_pred)
+
+    fold_metrics <- compute_metrics(test_y_virus_level, y_pred)
+    metrics[i, ] <- c(fold_metrics$precision, fold_metrics$recall, fold_metrics$f1)
 
     predictions[[i]] <- prediction
 }
 
 final_predictions <- do.call(rbind, predictions)
 
-average_f1 <- mean(f1_scores)
-print(paste("Average F1 Score:", average_f1))
+average_metrics <- colMeans(metrics)
+
+print(paste("Average Precision:", average_metrics["precision"]))
+print(paste("Average Recall:", average_metrics["recall"]))
+print(paste("Average F1 Score:", average_metrics["f1"]))
