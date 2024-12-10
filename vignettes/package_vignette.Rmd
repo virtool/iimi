@@ -2,7 +2,7 @@
 title: "Introduction to the iimi package"
 author: "Haochen Ning"
 date: '`r paste("First created on 2023-04-29. Updated on", Sys.Date())`'
-output: 
+output:
   rmarkdown::html_vignette:
     toc: true
 vignette: >
@@ -20,12 +20,12 @@ library(httr)
 ## 1. Introduction
 
 This vignette aims to give an introduction on how to use the `iimi` package for
-plant virus diagnostics and how to visualize the coverage profile for the 
+plant virus diagnostics and how to visualize the coverage profile for the
 sample mapping. We also included a tutorial on creating unreliable regions.
 
 ### 1.1. Installation
 
-First, let's install necessary packages. You may skip this step if you have 
+First, let's install necessary packages. You may skip this step if you have
 installed the packages before.
 
 ```{r, warning=FALSE, message=FALSE, eval=FALSE}
@@ -54,14 +54,14 @@ library(dplyr)
 
 ### 1.3. Data Pre-processing
 
-We provide three example coverage profiles to demonstrate how to use `iimi`. 
+We provide three example coverage profiles to demonstrate how to use `iimi`.
 These files are sourced from the dataset used in the VirHunter paper [@virhunter],
 which we also utilized for external validation in our manuscript [@iimi]. You can
-download these files directly from the Recherche Data Gouv website [@sugarbeet]. 
+download these files directly from the Recherche Data Gouv website [@sugarbeet].
 We recommend storing all BAM files in a single folder for ease of access.
 
 To get started creating coverage profiles and feature-extracted data frames, the
-process involves four steps: 
+process involves four steps:
 (1) Downloading the raw data in FASTQ format from the link above
 (2) Use Bowtie2 to map the FASTQ files (paired-end or single-end) against the [official Virtool virus data base (ver. 1.4.0)](https://github.com/virtool/ref-plant-viruses) to get SAM outputs
 (3) Convert SAM to indexed and sorted BAM using Samtools
@@ -70,7 +70,7 @@ functions (tutorials in the next section)
 
 We recommend Bowtie2 or minimap2 since we have tried both and they yield similar
 result with minimap2 having a slight decrease. We let both software to report all
-alignments (`-a` mode for Bowtie2, `--secondary=yes` for minimap2). You can also 
+alignments (`-a` mode for Bowtie2, `--secondary=yes` for minimap2). You can also
 use other mapping tools.
 
 Next, we provide a short tutorial to guide you through using `iimi` functions to
@@ -79,23 +79,23 @@ make predictions on the real data.
 
 ## 2. Converting BAM file(s) into coverage profiles and feature-extracted data frame
 
-Let's convert the indexed and sorted BAM file(s) into coverage profiles and 
+Let's convert the indexed and sorted BAM file(s) into coverage profiles and
 feature-extracted data frame from the previous section.
 
 We will use the coverage profiles to visualize the mapping information. The
-feature-extracted data frame will be used in the model training and testing 
+feature-extracted data frame will be used in the model training and testing
 process.
 
 **Note that both training and testing data need to go through the conversion step.**
 
-In our example, we stored the conversion for both the testing and training 
+In our example, we stored the conversion for both the testing and training
 datasets in the same object. You can do the conversion separately for your data.
 
 **Important: the example code does not work unless the path to the folder that stores your BAM files is provided.**
 
 ### 2.1. State the path to the folder of your BAM files
 
-If you already have coverage profiles in run-length encoding (RLE) format, go 
+If you already have coverage profiles in run-length encoding (RLE) format, go
 to section 2.2.
 
 ```{r, eval=FALSE, warning=FALSE}
@@ -119,12 +119,12 @@ example_cov <- convert_bam_to_rle(bam_file = "path_to_bamfiles")
 
 #### 2.2.2. Convert the list of RLEs to a feature-extracted data frame.
 
-This section explains how to convert the RLE format to feature-extracted 
+This section explains how to convert the RLE format to feature-extracted
 dataframes, with options for handling unreliable regions.
 
 By default, the package uses provided unreliable regions and enables mappability
-profiling and filtering to eliminate false peaks. This is the recommended 
-approach for most users. 
+profiling and filtering to eliminate false peaks. This is the recommended
+approach for most users.
 * To use the default settings, no additional code is required.
 * To disable this feature, set `unreliable_region_enabled = FALSE` when calling `convert_rle_to_df()`.
 
@@ -150,61 +150,61 @@ df <-
 
 ## 3. Predicting the plant sample(s)
 
-To make predictions, use the converted mapping result of the sample(s) that you 
+To make predictions, use the converted mapping result of the sample(s) that you
 wish to detect as the input, `newdata`. Make sure you have converted the indexed
 and sorted BAM files into feature-extracted data frame from the section above.
 
 After preparing your test sample, you can choose to test the data using our
-provided training model or the model you trained using `train_iimi()`. The 
+provided training model or the model you trained using `train_iimi()`. The
 tutorial of training your own model is provided in the next section.
 
 **Note: if you wish to customize unreliable regions, please go to 3.3.**
 
 ### 3.1 Using pre-trained models and no customization
 
-If you wish to use provided training model, only input your data to `newdata` 
+If you wish to use provided training model, only input your data to `newdata`
 and choose a method of your wish using `predict_iimi()`.
 
 There are three methods that you may choose from: `xgb`, `en`, and `rf`, which
-stand for pre-trained XGBoost, elastic net, and random forest models. The 
+stand for pre-trained XGBoost, elastic net, and random forest models. The
 example below uses the pre-trained XGBoost model.
 
 ```{r, message=FALSE, warning=FALSE, results='hide', eval=FALSE}
 prediction_default <- predict_iimi(newdata = df, method = "xgb")
 ```
 
-The detection of your plant sample(s) is finished. The prediction is `TRUE` if 
+The detection of your plant sample(s) is finished. The prediction is `TRUE` if
 virus infected the sample, `FALSE` if virus did not infect the sample.
 
 
 ### 3.2. Customizing your own model
 
-If you would like to train your own model and use this model to test your data, 
+If you would like to train your own model and use this model to test your data,
 you can use the codes below to train a new model with your own data.
 
 Ideally, the number of the samples used to train the model should be bigger than
-100. However, we are only providing a tutorial on how to use the 
-`train_iimi()` function, only two samples are used to train the model since 
-`example_cov()` only contains three in-house data's coverage information. 
+100. However, we are only providing a tutorial on how to use the
+`train_iimi()` function, only two samples are used to train the model since
+`example_cov()` only contains three in-house data's coverage information.
 
-Now, we need to prepare our training data. We are using a 80/20 random split 
+Now, we need to prepare our training data. We are using a 80/20 random split
 to split the three samples. This means that two samples are used as the training
-data, and one sample is used as the testing data. If you are training your own 
+data, and one sample is used as the testing data. If you are training your own
 data, the training data is the data that you want to train the model on; the
 testing data is the data that you would like to have a prediction on.
 
 Here are some definitions/explanation of the objects to input in `train_iimi()`:
 
-1. `train_x`: the feature-extracted data frame of plant samples that you would 
+1. `train_x`: the feature-extracted data frame of plant samples that you would
 like to train `iimi` model on. Make sure that you have mapped the samples to the
 virus database and converted the mapping result to sorted and indexes BAM files.
 
 2. `train_y`: the known truth or labels for your `train_x` data. Please label
 the data to make sure that it has a detection label for virus segments as well.
 
-3. `test_x`: the feature-extracted data frame of plant samples that you would 
-like to predict using your trained `iimi` model. Make sure that you have mapped 
-the samples to the virus database and converted the mapping result to sorted 
+3. `test_x`: the feature-extracted data frame of plant samples that you would
+like to predict using your trained `iimi` model. Make sure that you have mapped
+the samples to the virus database and converted the mapping result to sorted
 and indexes BAM files.
 
 ```{r, eval=FALSE}
@@ -237,7 +237,7 @@ fit <- train_iimi(train_x = train_x, train_y = train_y)
 
 Now, we have a trained model using the toy data.
 
-Then, the process to detect which viruses infect the plant sample(s) is the 
+Then, the process to detect which viruses infect the plant sample(s) is the
 same as previously described, except we are using a customized trained model.
 
 ```{r, eval=FALSE}
@@ -254,10 +254,10 @@ as above.
 
 **Note: if you would like to create your own unreliable regions, please customize them first, then extract features to build a data frame from section 2.2.2. using customized unreliable regions.**
 
-If you would like to create your own unreliable regions besides from using your 
+If you would like to create your own unreliable regions besides from using your
 own training model, you may use `create_mappability_profile()` and
-`high_nucleotide_regions()`. Both functions' output is a data frame with the 
-start and end position of the unmappable region, the virus that the region is 
+`high_nucleotide_regions()`. Both functions' output is a data frame with the
+start and end position of the unmappable region, the virus that the region is
 on, and the category that it belongs to.
 
 ```{r}
@@ -268,26 +268,26 @@ unreliable_regions %>% group_by(Categories) %>% sample_n(2)
 Unreliable regions contains (1) mappability profile (2) high nucleotide content
 regions.
 
-* Mappability profile is a profile of areas on a virus genome that can be mapped 
+* Mappability profile is a profile of areas on a virus genome that can be mapped
 to (1) other viruses or (2) host genome. We choose Arabidopsis Thaliana as our
 host genome.
 
-* High nucleotide content regions is a profile of areas on a virus genome that 
+* High nucleotide content regions is a profile of areas on a virus genome that
 has (1) high GC content and/or (2) high A nucleotide percentage.
 
-Including these two profiles into `iimi` ensures that there are no false peaks 
+Including these two profiles into `iimi` ensures that there are no false peaks
 like the ones described in the previous section.
 
 #### 3.3.1. Mappability profile
 
 Here is a short tutorial to make mappability profile.
 
-1. Split each of the virus segment from the virus database into a sliding 
+1. Split each of the virus segment from the virus database into a sliding
 window series with window size of your choice and with step size 1. The default
 value for window size is 75. You may choose any window size you want.
 
 2. Map one virus segment with each other, until you finish mapping it to all
-virus segments in the virus database. Also map the virus segment with a host 
+virus segments in the virus database. Also map the virus segment with a host
 genome of your choice. We chose to use Arabidopsis Thaliana.
 
 3. Sort and index the resulted BAM files from the mapping step.
@@ -329,10 +329,10 @@ high_nucleotide_regions <-
   create_high_nucleotide_content(gc = 0.6, a = 0.45)
 ```
 
-The default threshold for GC content is 60% and is 45% for A%. The thresholds 
+The default threshold for GC content is 60% and is 45% for A%. The thresholds
 are customizable.
 
-Now, we can combine these two regions into the final unreliable regions. 
+Now, we can combine these two regions into the final unreliable regions.
 You can use them to convert your training and testing data to feature-extracted data frames. Please refer to section 2.2.2. to see how to do so.
 
 
@@ -341,7 +341,7 @@ You can use them to convert your training and testing data to feature-extracted 
 Next, we can visualize the coverage profile by using the `plot_cov()` function.
 
 * `plot_cov()`: plots the coverage profile of the plant sample and the percentage
-  of A nucleotides and GC content for a sliding window of k-mer with the step as 
+  of A nucleotides and GC content for a sliding window of k-mer with the step as
   1. We used the default setting of k = 75.
 
 ```{r, fig.width=7, fig.height=5}
