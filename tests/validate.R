@@ -7,6 +7,7 @@ set.seed(11723)
 
 data_path <- "/Users/brycedavidson/Repos/iimi/data/model_data.rda"
 df <- get(load(data_path))
+label <- "detect_result"
 
 # ----------------------------------------------------------------
 
@@ -33,10 +34,10 @@ for (i in 1:5) {
     test_df <- df[-train_indices, ]
 
     train_y <- train_df$detect_result
-    train_x <- train_df[, -which(names(train_df) == "detect_result")]
+    train_x <- train_df[, -which(names(train_df) == label)]
 
     test_y <- test_df$detect_result
-    test_x <- test_df[, -which(names(train_df) == "detect_result")]
+    test_x <- test_df[, -which(names(train_df) == label)]
 
     # -------------------------------
 
