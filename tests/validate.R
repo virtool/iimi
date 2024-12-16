@@ -25,14 +25,16 @@ compute_metrics <- function(y_true, y_pred) {
 # ----------------------------------------------------------------
 
 df <- df %>%
-  group_by(virus_name, sample_id) %>%
-  mutate(num_segments = ifelse(n() > 1, ">1", "==1")) %>%
-  filter(num_segments == ">1") %>%
-  ungroup()
+    group_by(virus_name, sample_id) %>%
+    mutate(num_segments = ifelse(n() > 1, ">1", "==1")) %>%
+    filter(num_segments == ">1") %>%
+    ungroup()
 
 compound_label <- paste(df$num_segments, df$detect_result, sep = "_")
 
-df <- df %>% select(-num_segments) %>% mutate(detect_result = as.logical(detect_result))
+df <- df %>%
+    select(-num_segments) %>%
+    mutate(detect_result = as.logical(detect_result))
 
 # ----------------------------------------------------------------
 
