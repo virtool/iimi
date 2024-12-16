@@ -8,8 +8,6 @@ set.seed(11723)
 
 data_path <- "/Users/brycedavidson/Repos/iimi/data/model_data.rda"
 df <- get(load(data_path))
-label <- "detect_result"
-df$detect_result <- as.logical(df$detect_result)
 
 # ----------------------------------------------------------------
 
@@ -26,8 +24,20 @@ compute_metrics <- function(y_true, y_pred) {
 
 # ----------------------------------------------------------------
 
+df <- df %>%
+  group_by(virus_name, sample_id) %>%
+  mutate(num_segments = ifelse(n() > 1, ">1", "==1")) %>%
+  filter(num_segments == ">1") %>%
+  ungroup()
+
+compound_label <- paste(df$num_segments, df$detect_result, sep = "_")
+
+df <- df %>% select(-num_segments) %>% mutate(detect_result = as.logical(detect_result))
+
+# ----------------------------------------------------------------
+
 k <- 5
-folds <- createFolds(df$sample_id, k = k)
+folds <- createFolds(compound_label, k = k)
 predictions <- list()
 metrics <- data.frame(precision = numeric(k), recall = numeric(k), f1 = numeric(k))
 
@@ -36,10 +46,12 @@ for (i in 1:5) {
     train_df <- df[train_indices, ]
     test_df <- df[-train_indices, ]
 
-    train_y <- train_df[, label]
+    label <- "detect_result"
+
+    train_y <- as.logical(train_df[[label]])
     train_x <- train_df[, -which(names(train_df) == label)]
 
-    test_y <- test_df[, label]
+    test_y <- as.logical(test_df[[label]])
     test_x <- test_df[, -which(names(train_df) == label)]
 
     # -------------------------------
@@ -79,7 +91,7 @@ for (i in 1:5) {
 final_predictions <- do.call(rbind, predictions)
 
 average_metrics <- colMeans(metrics)
-
+print(metrics)
 print(paste("Average Precision:", average_metrics["precision"]))
 print(paste("Average Recall:", average_metrics["recall"]))
 print(paste("Average F1 Score:", average_metrics["f1"]))
