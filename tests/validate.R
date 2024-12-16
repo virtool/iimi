@@ -27,8 +27,11 @@ compute_metrics <- function(y_true, y_pred) {
 df <- df %>%
     group_by(virus_name, sample_id) %>%
     mutate(num_segments = ifelse(n() > 1, ">1", "==1")) %>%
-    filter(num_segments == ">1") %>%
     ungroup()
+
+count <- df %>%
+    group_by(num_segments) %>%
+    summarize(n = n(), .groups = "drop")
 
 compound_label <- paste(df$num_segments, df$detect_result, sep = "_")
 
