@@ -29,23 +29,25 @@ bin_edges <- c(0, 1, 2, 3, 4, Inf)
 bin_labels <- c("1", "2", "3", "4", ">4")
 
 df <- df %>%
-  group_by(virus_name, sample_id) %>%
-  mutate(num_segments = cut(n(), breaks = bin_edges, labels = bin_labels, right = TRUE)) %>%
-  ungroup()
+    group_by(virus_name, sample_id) %>%
+    mutate(num_segments = cut(n(), breaks = bin_edges, labels = bin_labels, right = TRUE)) %>%
+    ungroup()
 
 count_segment <- df %>%
-  group_by(num_segments, detect_result) %>%
-  summarise(n = n()) %>%
-  mutate(percentage = n / sum(n))
+    group_by(num_segments, detect_result) %>%
+    summarise(n = n()) %>%
+    mutate(percentage = n / sum(n))
 
 count_virus <- df %>%
-  group_by(virus_name, sample_id) %>%
-  summarize(detect_result = all(detect_result),
-            num_segments = cut(n(),breaks = bin_edges, labels = bin_labels, right = TRUE)) %>%
-  ungroup() %>%
-  group_by(num_segments, detect_result) %>%
-  summarise(n = n()) %>%
-  mutate(percentage = n / sum(n))
+    group_by(virus_name, sample_id) %>%
+    summarize(
+        detect_result = all(detect_result),
+        num_segments = cut(n(), breaks = bin_edges, labels = bin_labels, right = TRUE)
+    ) %>%
+    ungroup() %>%
+    group_by(num_segments, detect_result) %>%
+    summarise(n = n()) %>%
+    mutate(percentage = n / sum(n))
 
 exit()
 
