@@ -35,18 +35,14 @@ df <- df %>%
 
 count_segment <- df %>%
     group_by(num_segments, detect_result) %>%
-    summarise(n = n()) %>%
+    summarise(n = n(), .groups = "drop") %>%
     mutate(percentage = n / sum(n))
 
 count_virus <- df %>%
     group_by(virus_name, sample_id) %>%
-    summarize(
-        detect_result = all(detect_result),
-        num_segments = cut(n(), breaks = bin_edges, labels = bin_labels, right = TRUE)
-    ) %>%
-    ungroup() %>%
+    summarize(detect_result = all(detect_result), num_segments = first(num_segments), .groups = "drop") %>%
     group_by(num_segments, detect_result) %>%
-    summarise(n = n()) %>%
+    summarise(n = n(), .groups = "drop") %>%
     mutate(percentage = n / sum(n))
 
 exit()
