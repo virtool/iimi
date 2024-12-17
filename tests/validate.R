@@ -8,6 +8,7 @@ set.seed(11723)
 
 data_path <- "/Users/brycedavidson/Repos/iimi/data/model_data.rda"
 df <- get(load(data_path))
+df$detect_result <- as.logical(df$detect_result)
 
 # ----------------------------------------------------------------
 
@@ -24,14 +25,32 @@ compute_metrics <- function(y_true, y_pred) {
 
 # ----------------------------------------------------------------
 
-df <- df %>%
-    group_by(virus_name, sample_id) %>%
-    mutate(num_segments = ifelse(n() > 1, ">1", "==1")) %>%
-    ungroup()
+bin_edges <- c(0, 1, 2, 3, 4, Inf)
+bin_labels <- c("1", "2", "3", "4", ">4")
 
-count <- df %>%
-    group_by(num_segments) %>%
-    summarize(n = n(), .groups = "drop")
+df <- df %>%
+  group_by(virus_name, sample_id) %>%
+  mutate(num_segments = cut(n(), breaks = bin_edges, labels = bin_labels, right = TRUE)) %>%
+  ungroup()
+
+count_segment <- df %>%
+  group_by(num_segments, detect_result) %>%
+  summarise(n = n()) %>%
+  mutate(percentage = n / sum(n))
+
+count_virus <- df %>%
+  group_by(virus_name, sample_id) %>%
+  summarize(detect_result = all(detect_result),
+            num_segments = cut(n(),breaks = bin_edges, labels = bin_labels, right = TRUE)) %>%
+  ungroup() %>%
+  group_by(num_segments, detect_result) %>%
+  summarise(n = n()) %>%
+  mutate(percentage = n / sum(n))
+
+exit()
+
+# -------------------------------
+
 
 compound_label <- paste(df$num_segments, df$detect_result, sep = "_")
 
