@@ -142,30 +142,31 @@ convert_rle_to_df <- function(covs,
       percent_10 <-
         sum(covs[[sample]][[seg]]@lengths[idx10]) / sum(covs[[sample]][[seg]]@lengths)
 
-      new_row <- c(
-        seg_id,
-        isolate_id,
-        v_name,
-        sample_id,
-        a_content,
-        c_content,
-        t_content,
-        gc_content,
-        mean_val,
-        max_val,
-        seg_length,
-        percent_2,
-        percent_3,
-        percent_4,
-        percent_5,
-        percent_6,
-        percent_7,
-        percent_8,
-        percent_9,
-        percent_10
+      new_row <- data.frame(
+        seq_id = seg_id,
+        iso_id = isolate_id,
+        virus_name = v_name,
+        sample_id = sample_id,
+        A_percent = a_content,
+        C_percent = c_content,
+        T_percent = t_content,
+        GC_percent = gc_content,
+        avg_cov = mean_val,
+        max_cov = max_val,
+        seg_len = seg_length,
+        cov_2_percent = percent_2,
+        cov_3_percent = percent_3,
+        cov_4_percent = percent_4,
+        cov_5_percent = percent_5,
+        cov_6_percent = percent_6,
+        cov_7_percent = percent_7,
+        cov_8_percent = percent_8,
+        cov_9_percent = percent_9,
+        cov_10_percent = percent_10
       )
 
       model_data <- rbind(model_data, new_row)
+
     }
   }
 
