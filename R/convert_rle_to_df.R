@@ -143,7 +143,7 @@ convert_rle_to_df <- function(covs,
         sum(covs[[sample]][[seg]]@lengths[idx10]) / sum(covs[[sample]][[seg]]@lengths)
 
       new_row <- data.frame(
-        seq_id = seg_id,
+        seg_id = seg_id,
         iso_id = isolate_id,
         virus_name = v_name,
         sample_id = sample_id,
