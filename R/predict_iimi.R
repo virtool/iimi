@@ -76,7 +76,7 @@ predict_iimi <-
       test = sparsify(data.table(newdata[, -c(1:4)]))
 
       if (missing(trained_model)) {
-        model = xgb.load.raw(trained_xgb$xgb_model_bytes)
+        model = xgb.load.raw(trained_xgb)
       } else {
         model = trained_model
       }
