@@ -22,7 +22,7 @@
 
 
 
-#' The unreliable regions of the virus segments
+#' The unreliable regions of the virus segments for two references combined
 #'
 #' A data frame of unmappable regions and regions of CG% and A% over 60% and 45%
 #'  respectively for the virus segments. It is worth to note that if a
@@ -41,7 +41,7 @@
 #'   \item{1_5_0}{The version number of the virus database}
 #' }
 
-"unreliable_regions"
+"combined_unreliable_regions"
 
 
 

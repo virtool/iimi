@@ -15,10 +15,10 @@
 #'
 #' @param covs A list of Coverage profile(s) in RLE format. Can be one or more
 #'     samples.
-#' @param unreliable_region_version The version number (character string) of unreliable regions of the virus segments.
-#'     Default is `1_4_0`. It includes the mappability profile from
-#'     a host genome (we only have Arabidopsis thaliana right now) and virus
-#'     references, and the regions that have CG% and A% over 60% and 45%
+#' @param unreliable_regions A dataframe containing annotated unreliable regions of the
+#'     mapped reference. Default unreliable regions are version 1_4_0. It includes the
+#'     mappability profile from a host genome (we only have Arabidopsis thaliana right now)
+#'     and virus references, and the regions that have CG% and A% over 60% and 45%
 #'     respectively.
 #' @param unreliable_region_enabled Default is `TRUE`. If `TRUE`, the input will be
 #'     checked against `unreliable_region_df`. If `FALSE`, this step will be
@@ -32,19 +32,14 @@
 #'     coverage information.
 #' @export
 convert_rle_to_df <- function(covs,
-                              unreliable_region_version = "1_4_0",
+                              unreliable_regions = combined_unreliable_regions[unreliable_regions$`1_4_0` == TRUE, -c(5, 6)],
                               unreliable_region_enabled = TRUE,
                               additional_nucleotide_info = data.frame()) {
   if (unreliable_region_enabled == T) {
-    if (unreliable_region_version == "1_4_0") {
-      unreliable_region_df = unreliable_regions[which(unreliable_regions$`1_4_0` == TRUE), ]
-    } else if (unreliable_region_version == "1_5_0") {
-      unreliable_region_df = unreliable_regions[which(unreliable_regions$`1_5_0` == TRUE), ]
-    }
     for (sample in names(covs)) {
       for (seg in names(covs[[sample]])) {
         unreliable_regions_seg <-
-          unreliable_region_df[which(unreliable_region_df$`Virus segment` == seg),]
+          unreliable_regions[which(unreliable_regions$`Virus segment` == seg),]
 
         if (nrow(unreliable_regions_seg) != 0) {
           for (ii in 1:nrow(unreliable_regions_seg)) {
