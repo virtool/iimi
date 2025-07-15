@@ -1,7 +1,7 @@
 # run_with_defaults
 
     Code
-      convert_rle_to_df(rles(), unreliable_regions = prepared_unreliable_regions())
+      convert_rle_to_df(rles())
     Output
            seg_id   iso_id                            virus_name sample_id A_percent
       1  at4zpfgj      ozx Grapevine leafroll-associated virus 1   reads_1 0.2681833
@@ -16,15 +16,15 @@
       10 b96oqx77      h9j Grapevine leafroll-associated virus 1   reads_1 0.2689392
       11 b96oqx77 t0bfutne Grapevine leafroll-associated virus 1   reads_1 0.2689392
          C_percent T_percent GC_percent     avg_cov max_cov seg_len cov_2_percent
-      1  0.1883247 0.2809036  0.4509131 0.001477885       1   18946             0
-      2  0.1883247 0.2809036  0.4509131 0.001477885       1   18946             0
+      1  0.1883247 0.2809036  0.4509131 0.005330941       1   18946             0
+      2  0.1883247 0.2809036  0.4509131 0.005330941       1   18946             0
       3  0.1909845 0.2797125  0.4525181 0.005337420       1   18923             0
       4  0.1843078 0.2818479  0.4493810 0.010825875       1   18659             0
       5  0.1843078 0.2818479  0.4493810 0.010825875       1   18659             0
       6  0.1850595 0.2815210  0.4470835 0.005439759       1   18567             0
       7  0.1850595 0.2815210  0.4470835 0.005439759       1   18567             0
-      8  0.1884042 0.2777748  0.4512306 0.001601623       1   18731             0
-      9  0.1884042 0.2777748  0.4512306 0.001601623       1   18731             0
+      8  0.1884042 0.2777748  0.4512306 0.005392131       1   18731             0
+      9  0.1884042 0.2777748  0.4512306 0.005392131       1   18731             0
       10 0.1876160 0.2793299  0.4517309 0.005354397       1   18863             0
       11 0.1876160 0.2793299  0.4517309 0.005354397       1   18863             0
          cov_3_percent cov_4_percent cov_5_percent cov_6_percent cov_7_percent
@@ -55,7 +55,7 @@
 # run_without_unreliable_regions
 
     Code
-      convert_rle_to_df(rles(), unreliable_region_enabled = FALSE)
+      convert_rle_to_df(rles(), unreliable_regions = prepared_unreliable_regions())
     Output
            seg_id   iso_id                            virus_name sample_id A_percent
       1  at4zpfgj      ozx Grapevine leafroll-associated virus 1   reads_1 0.2681833
@@ -70,15 +70,15 @@
       10 b96oqx77      h9j Grapevine leafroll-associated virus 1   reads_1 0.2689392
       11 b96oqx77 t0bfutne Grapevine leafroll-associated virus 1   reads_1 0.2689392
          C_percent T_percent GC_percent     avg_cov max_cov seg_len cov_2_percent
-      1  0.1883247 0.2809036  0.4509131 0.005330941       1   18946             0
-      2  0.1883247 0.2809036  0.4509131 0.005330941       1   18946             0
+      1  0.1883247 0.2809036  0.4509131 0.001477885       1   18946             0
+      2  0.1883247 0.2809036  0.4509131 0.001477885       1   18946             0
       3  0.1909845 0.2797125  0.4525181 0.005337420       1   18923             0
       4  0.1843078 0.2818479  0.4493810 0.010825875       1   18659             0
       5  0.1843078 0.2818479  0.4493810 0.010825875       1   18659             0
       6  0.1850595 0.2815210  0.4470835 0.005439759       1   18567             0
       7  0.1850595 0.2815210  0.4470835 0.005439759       1   18567             0
-      8  0.1884042 0.2777748  0.4512306 0.005392131       1   18731             0
-      9  0.1884042 0.2777748  0.4512306 0.005392131       1   18731             0
+      8  0.1884042 0.2777748  0.4512306 0.001601623       1   18731             0
+      9  0.1884042 0.2777748  0.4512306 0.001601623       1   18731             0
       10 0.1876160 0.2793299  0.4517309 0.005354397       1   18863             0
       11 0.1876160 0.2793299  0.4517309 0.005354397       1   18863             0
          cov_3_percent cov_4_percent cov_5_percent cov_6_percent cov_7_percent

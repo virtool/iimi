@@ -14,16 +14,14 @@ rles <- function() {
 
 test_that("run_with_defaults", {
   expect_snapshot(
-    convert_rle_to_df(
-      rles(), unreliable_regions = prepared_unreliable_regions()
-    )
+    convert_rle_to_df(rles())
   )
 })
 
 test_that("run_without_unreliable_regions", {
   expect_snapshot(
     convert_rle_to_df(
-      rles(), unreliable_region_enabled = FALSE
+      rles(), unreliable_regions = prepared_unreliable_regions()
     )
   )
 })
@@ -32,12 +30,11 @@ test_that("unreliable_regions_has_effect", {
   expect_failure(
     expect_equal(
       convert_rle_to_df(
-        rles(), unreliable_region_enabled = FALSE
+        rles()
       ),
       convert_rle_to_df(
         rles(),
         unreliable_regions = prepared_unreliable_regions(),
-        unreliable_region_enabled = TRUE
       )
     )
   )
