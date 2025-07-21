@@ -1,4 +1,4 @@
-#' Convert run-length encodings (RLEs) to a data frame.
+#' Convert run-length encodings (RLEs) to a data frame of features.
 #'
 #' @examples
 #' \dontrun{
@@ -11,7 +11,9 @@
 #' @param covs A list of Coverage profile(s) in RLE format. Can be one or more
 #'     samples.
 #' @param unreliable_regions A dataframe containing annotated unreliable regions of the
-#'     mapped reference.
+#'     mapped reference. The information provided must be a 4-column data frame
+#'     that follows the format of `combined_unreliable_regions`, sans columns `1_4_0`
+#'     and `1_5_0`.
 #' @param additional_nucleotide_info Additional nucleotide information for virus
 #'     segments that are not included in `nucleotide_info`. The information
 #'     provided must be a data frame that follows the format of
@@ -21,13 +23,15 @@
 #'     coverage information.
 #' @export
 convert_rle_to_df <- function(
-  covs, unreliable_regions = NULL, additional_nucleotide_info = data.frame()
+  covs,
+  unreliable_regions = NULL,
+  additional_nucleotide_info = data.frame()
 ) {
   if (!is.null(unreliable_regions)) {
     for (sample in names(covs)) {
       for (seg in names(covs[[sample]])) {
         unreliable_regions_seg <-
-          unreliable_regions[which(unreliable_regions$`Virus segment` == seg),]
+          unreliable_regions[which(unreliable_regions$`Virus segment` == seg), ]
 
         if (nrow(unreliable_regions_seg) != 0) {
           for (ii in 1:nrow(unreliable_regions_seg)) {
@@ -149,11 +153,10 @@ convert_rle_to_df <- function(
       )
 
       model_data <- rbind(model_data, new_row)
-
     }
   }
 
-  for (i in colnames(model_data[,-c(1:4)])) {
+  for (i in colnames(model_data[, -c(1:4)])) {
     model_data[[i]] <- as.numeric(model_data[[i]])
   }
 

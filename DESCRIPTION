@@ -20,7 +20,7 @@ Description: A novel machine learning method for plant viruses diagnostic using
     coverage information is provided.
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 LazyData: true
 VignetteBuilder: knitr
 Imports:

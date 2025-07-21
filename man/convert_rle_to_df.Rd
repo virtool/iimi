@@ -2,13 +2,11 @@
 % Please edit documentation in R/convert_rle_to_df.R
 \name{convert_rle_to_df}
 \alias{convert_rle_to_df}
-\title{Convert run-length encodings (RLEs) to a data frame.}
+\title{Convert run-length encodings (RLEs) to a data frame of features.}
 \usage{
 convert_rle_to_df(
   covs,
-  unreliable_regions = combined_unreliable_regions[unreliable_regions$`1_4_0` == TRUE,
-    -c(5, 6)],
-  unreliable_region_enabled = TRUE,
+  unreliable_regions = NULL,
   additional_nucleotide_info = data.frame()
 )
 }
@@ -17,14 +15,9 @@ convert_rle_to_df(
 samples.}
 
 \item{unreliable_regions}{A dataframe containing annotated unreliable regions of the
-mapped reference. Default unreliable regions are version 1_4_0. It includes the
-mappability profile from a host genome (we only have Arabidopsis thaliana right now)
-and virus references, and the regions that have CG\% and A\% over 60\% and 45\%
-respectively.}
-
-\item{unreliable_region_enabled}{Default is \code{TRUE}. If \code{TRUE}, the input will be
-checked against \code{unreliable_region_df}. If \code{FALSE}, this step will be
-skipped.}
+mapped reference. The information provided must be a 4-column data frame
+that follows the format of \code{combined_unreliable_regions}, sans columns \verb{1_4_0}
+and \verb{1_5_0}.}
 
 \item{additional_nucleotide_info}{Additional nucleotide information for virus
 segments that are not included in \code{nucleotide_info}. The information
@@ -39,12 +32,6 @@ coverage information.
 \description{
 Converts a list of run-length encodings (RLEs) into a data frame
 with 16 features after mappability profiling and nucleotide filtering.
-}
-\details{
-Converts a list of run-length encodings (RLEs) into a data frame.
-
-The returned dataframe contains 16 features for training a machine learning model.
-after mappability profiling and nucleotide filtering.
 }
 \examples{
 \dontrun{
