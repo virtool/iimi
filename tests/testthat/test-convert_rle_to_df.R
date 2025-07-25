@@ -18,7 +18,7 @@ test_that("run_with_defaults", {
   )
 })
 
-test_that("run_without_unreliable_regions", {
+test_that("run_with_unreliable_regions", {
   expect_snapshot(
     convert_rle_to_df(
       rles(), unreliable_regions = prepared_unreliable_regions()
