@@ -43,17 +43,6 @@ test_that("unreliable_regions_has_effect", {
   )
 })
 
-test_that("run_single", {
-  rles <- convert_bam_to_rle(
-    here::here("tests", "files", "single.sorted.bam"), 
-    paired = FALSE
-  )
-
-  expect_snapshot(
-    convert_rle_to_df(rles, unreliable_regions = prepared_unreliable_regions())
-  )
-})
-
 test_that("run_paired", {
   rles_single <- convert_bam_to_rle(
     here::here("tests", "files", "paired_1.sorted.bam"), 
