@@ -1,9 +1,7 @@
 prepared_unreliable_regions <- function() {
-  return(
-    combined_unreliable_regions %>%
-      dplyr::filter(`1_4_0` == TRUE) %>%
-      dplyr::select(Start, End, `Virus segment`, Categories)
-  )
+  load(here::here("tests", "data", "unreliable_regions_1_4_0.rda"))
+
+  return(unreliable_regions)
 }
 
 rles <- function() {
