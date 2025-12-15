@@ -1,9 +1,4 @@
-#' Convert run-length encodings (RLEs) to a data frame.
-#'
-#' Converts a list of run-length encodings (RLEs) into a data frame.
-#'
-#' The returned dataframe contains 16 features for training a machine learning model.
-#' after mappability profiling and nucleotide filtering.
+#' Convert run-length encodings (RLEs) to a data frame of features.
 #'
 #' @examples
 #' \dontrun{
@@ -16,13 +11,9 @@
 #' @param covs A list of Coverage profile(s) in RLE format. Can be one or more
 #'     samples.
 #' @param unreliable_regions A dataframe containing annotated unreliable regions of the
-#'     mapped reference. Default unreliable regions are version 1_4_0. It includes the
-#'     mappability profile from a host genome (we only have Arabidopsis thaliana right now)
-#'     and virus references, and the regions that have CG% and A% over 60% and 45%
-#'     respectively.
-#' @param unreliable_region_enabled Default is `TRUE`. If `TRUE`, the input will be
-#'     checked against `unreliable_region_df`. If `FALSE`, this step will be
-#'     skipped.
+#'     mapped reference. The information provided must be a 4-column data frame
+#'     that follows the format of `combined_unreliable_regions`, sans columns `1_4_0`
+#'     and `1_5_0`.
 #' @param additional_nucleotide_info Additional nucleotide information for virus
 #'     segments that are not included in `nucleotide_info`. The information
 #'     provided must be a data frame that follows the format of
@@ -31,15 +22,16 @@
 #'     segment that the plant sample reads are aligned to and a RLE list of
 #'     coverage information.
 #' @export
-convert_rle_to_df <- function(covs,
-                              unreliable_regions = combined_unreliable_regions[unreliable_regions$`1_4_0` == TRUE, -c(5, 6)],
-                              unreliable_region_enabled = TRUE,
-                              additional_nucleotide_info = data.frame()) {
-  if (unreliable_region_enabled == T) {
+convert_rle_to_df <- function(
+  covs,
+  unreliable_regions = NULL,
+  additional_nucleotide_info = data.frame()
+) {
+  if (!is.null(unreliable_regions)) {
     for (sample in names(covs)) {
       for (seg in names(covs[[sample]])) {
         unreliable_regions_seg <-
-          unreliable_regions[which(unreliable_regions$`Virus segment` == seg),]
+          unreliable_regions[which(unreliable_regions$`Virus segment` == seg), ]
 
         if (nrow(unreliable_regions_seg) != 0) {
           for (ii in 1:nrow(unreliable_regions_seg)) {
@@ -161,11 +153,10 @@ convert_rle_to_df <- function(covs,
       )
 
       model_data <- rbind(model_data, new_row)
-
     }
   }
 
-  for (i in colnames(model_data[,-c(1:4)])) {
+  for (i in colnames(model_data[, -c(1:4)])) {
     model_data[[i]] <- as.numeric(model_data[[i]])
   }
 
